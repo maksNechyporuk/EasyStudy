@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using EasyStudy.BLL.Interfaces;
-using EasyStudy.BLL.Models;
-using EasyStudy.DAL.Entities;
+using BLL.Interfaces;
+using BLL.Models;
+using DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

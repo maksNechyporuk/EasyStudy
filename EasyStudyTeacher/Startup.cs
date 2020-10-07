@@ -1,4 +1,7 @@
-using EasyStudy.DAL.Entities;
+using BLL.Interfaces;
+using BLL.Services;
+using DAL.Entities;
+using DAL.Seeder;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,9 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using EasyStudy.BLL.Interfaces;
-using EasyStudy.BLL.Services;
-using EasyStudy.DAL.Seeder;
+
 
 namespace EasyStudy
 {
@@ -87,8 +88,8 @@ namespace EasyStudy
             services.AddIdentity<DbUser, DbRole>(options => options.Stores.MaxLengthForKeys = 128)
                 .AddEntityFrameworkStores<EFContext>()
                 .AddDefaultTokenProviders();
-            
-            
+
+
             services.Configure<IdentityOptions>(options =>
             {
                 // Default Password settings.
@@ -100,10 +101,10 @@ namespace EasyStudy
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, EFContext dataContext)
         {
-           // dataContext.Database.EnsureCreated();
-           // dataContext.Database.Migrate();
+            // dataContext.Database.EnsureCreated();
+            // dataContext.Database.Migrate();
 
-           //Database.SetInitializer<EFContext>(null);
+            //Database.SetInitializer<EFContext>(null);
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -129,7 +130,7 @@ namespace EasyStudy
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-          //  app.UseSession();
+            //  app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
@@ -147,8 +148,8 @@ namespace EasyStudy
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-         SeederDB.SeedData(app.ApplicationServices, env, this.Configuration);
-    
+            SeederDB.SeedData(app.ApplicationServices, this.Configuration);
+
         }
     }
 }
