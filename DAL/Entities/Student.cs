@@ -23,7 +23,7 @@ namespace DAL.Entities
         public string MiddleName { get; set; }
 
         [Range(0, 130, ErrorMessage = "Error")]
-        public double Age { get; set; }
+        public DateTime DayOfbirthday { get; set; }
         [ForeignKey("GroupIdOf")]
         public long? GroupId { get; set; }
         public virtual Group Group { get; set; }

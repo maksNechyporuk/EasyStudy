@@ -20,26 +20,27 @@ namespace DAL.Seeder
                 }).Result;
             }
             string email = "beatrice.lavigne@example.com";
-            Random random=new Random();
-            
+            Random random = new Random();
+
             if (userManager.FindByEmailAsync(email).Result == null)
             {
-                Student student =new Student()
-                    {  
-                        Age = random.Next(6,18),
-                        Image = "https://randomuser.me/api/portraits/women/10.jpg"
-                        ,FirstName = "Deniz",
-                        LastName = "Adan",
-                        MiddleName = "Іванович" , 
-                        GroupId= 2
-                    };
+                Student student = new Student()
+                {
+                    DayOfbirthday = DateTime.Now,
+                    Image = "https://randomuser.me/api/portraits/women/10.jpg"
+                        ,
+                    FirstName = "Deniz",
+                    LastName = "Adan",
+                    MiddleName = "Іванович",
+                    GroupId = 2
+                };
                 var user = new DbUser()
                 {
                     Email = email,
-                    UserName =email,
+                    UserName = email,
                     PhoneNumber = "(700)-647-0341",
                     Student = student
-                    
+
                 };
                 var result = userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
                 result = userManager.AddToRoleAsync(user, roleName).Result;
@@ -47,22 +48,24 @@ namespace DAL.Seeder
             email = "lucas.gagne@example.com";
             if (userManager.FindByEmailAsync(email).Result == null)
             {
-                Student student =new Student()
-                {  
-                    Age = random.Next(6,18),
-                    Image = "https://randomuser.me/api/portraits/women/10.jpg"   
-                    ,FirstName = "Branco",
+                Student student = new Student()
+                {
+                    DayOfbirthday = DateTime.Now,
+                    Image = "https://randomuser.me/api/portraits/women/10.jpg"
+                    ,
+                    FirstName = "Branco",
                     LastName = "Messemaker",
                     MiddleName = "Іванович"
-                    , GroupId = 2
+                    ,
+                    GroupId = 2
                 };
                 var user = new DbUser()
                 {
                     Email = email,
-                    UserName =email,
+                    UserName = email,
                     PhoneNumber = "(700)-482-348",
                     Student = student
-                    
+
                 };
                 var result = userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
                 result = userManager.AddToRoleAsync(user, roleName).Result;
@@ -70,22 +73,24 @@ namespace DAL.Seeder
             email = "leevi.niemi@example.com";
             if (userManager.FindByEmailAsync(email).Result == null)
             {
-                Student student =new Student()
-                {  
-                    Age = random.Next(6,18),
+                Student student = new Student()
+                {
+                    DayOfbirthday = DateTime.Now,
                     Image = "https://randomuser.me/api/portraits/women/10.jpg"
-                    ,FirstName = "Marius",
+                    ,
+                    FirstName = "Marius",
                     LastName = "Johansen",
                     MiddleName = "Іванович"
-                    , GroupId = 1
+                    ,
+                    GroupId = 1
                 };
                 var user = new DbUser()
                 {
                     Email = email,
-                    UserName =email,
+                    UserName = email,
                     PhoneNumber = "(700)-647-7842",
                     Student = student
-                    
+
                 };
                 var result = userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
                 result = userManager.AddToRoleAsync(user, roleName).Result;
@@ -93,23 +98,25 @@ namespace DAL.Seeder
             email = "luukas.hautala@example.com";
             if (userManager.FindByEmailAsync(email).Result == null)
             {
-                Student student =new Student()
-                {  
-                    Age = random.Next(6,18),
+                Student student = new Student()
+                {
+                    DayOfbirthday = DateTime.Now,
                     Image = "https://randomuser.me/api/portraits/women/10.jpg"
-                    ,FirstName = "Fletcher",
+                    ,
+                    FirstName = "Fletcher",
                     LastName = "Wright",
-                    MiddleName = "Іванович"   
-                    , GroupId = 1
-                        
+                    MiddleName = "Іванович"
+                    ,
+                    GroupId = 1
+
                 };
                 var user = new DbUser()
                 {
                     Email = email,
-                    UserName =email,
+                    UserName = email,
                     PhoneNumber = "(700)-123-6544",
                     Student = student
-                    
+
                 };
                 var result = userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
                 result = userManager.AddToRoleAsync(user, roleName).Result;
@@ -117,19 +124,20 @@ namespace DAL.Seeder
             email = "gul.kocoglu@example.com";
             if (userManager.FindByEmailAsync(email).Result == null)
             {
-                Student student =new Student()
-                {  
-                    Age = random.Next(6,18),
+                Student student = new Student()
+                {
+                    DayOfbirthday = DateTime.Now,
                     Image = "https://randomuser.me/api/portraits/women/10.jpg"
-                    ,FirstName = "Beatrice",
+                    ,
+                    FirstName = "Beatrice",
                     LastName = "Lavigne",
                     MiddleName = "Іванович",
-                    GroupId= 1
+                    GroupId = 1
                 };
                 var user = new DbUser()
                 {
                     Email = email,
-                    UserName =email,
+                    UserName = email,
                     PhoneNumber = "(700)-671-8743",
                     Student = student
                 };

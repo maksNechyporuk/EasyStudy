@@ -1,5 +1,6 @@
 import * as WeatherForecasts from './WeatherForecasts';
 import * as Counter from './Counter';
+import { registerReducer } from '../components/auth/Register/reducer';
 
 // The top-level state object
 export interface ApplicationState {
@@ -12,7 +13,8 @@ export interface ApplicationState {
 // acts on the corresponding ApplicationState property type.
 export const reducers = {
     counter: Counter.reducer,
-    weatherForecasts: WeatherForecasts.reducer
+    weatherForecasts: WeatherForecasts.reducer,
+   register: registerReducer,
 };
 
 // This type can be used as a hint on action creators so that its 'dispatch' and 'getState' params are

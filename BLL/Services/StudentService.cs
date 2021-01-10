@@ -29,6 +29,13 @@ namespace BLL.Services
             _userManager = userManager;
             _signInManager = signInManager;
         }
+        public async Task<List<StudentVM>> GetStudentsByAge(int a, int b)
+        {
+            //var students = _context.Students.Where(st => st.DayOfbirthday >= a && st.DayOfbirthday <= b).AsQueryable();
+
+            //return await GetJoinStudents(students);
+            return null;
+        }
         public async Task<List<StudentVM>> GetJoinStudents(IQueryable<Student> students)
         {
             var list = students.Select(x =>
@@ -37,7 +44,7 @@ namespace BLL.Services
                     Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
                     NameGroup = x.Group.Name,
                     Email = x.User.Email,
-                    Age = x.Age,
+                    DayOfbirthday = x.DayOfbirthday,
                     Image = x.Image,
                     PhoneNumber = x.User.PhoneNumber,
                     GroupId = x.GroupId.Value,
@@ -52,7 +59,7 @@ namespace BLL.Services
             //         s => s.Id, 
             //         (u, s) =>new StudentVM()
             //         {
-            //             Age = s.Age,Email = u.Email,Image = s.Image,Name = s.FirstName +" " +s.LastName + " " + s.MiddleName
+            //             Age = s.DayOfbirthday,Email = u.Email,Image = s.Image,Name = s.FirstName +" " +s.LastName + " " + s.MiddleName
             //        ,PhoneNumber = u.PhoneNumber,
             //             GroupId = s.GroupIdOf.Value
             //
@@ -62,7 +69,7 @@ namespace BLL.Services
             //         g=>g.Id, 
             //         (u, s) =>new StudentVM()
             //         {
-            //             Age = u.Age,Email = u.Email,Image = u.Image,Name = u.Name,PhoneNumber = u.PhoneNumber,
+            //             Age = u.DayOfbirthday,Email = u.Email,Image = u.Image,Name = u.Name,PhoneNumber = u.PhoneNumber,
             //             GroupId = u.GroupId,
             //             Group = new GroupVM()
             //             {
@@ -89,7 +96,7 @@ namespace BLL.Services
             //         s => s.Id, 
             //         (u, s) =>new StudentVM()
             //         {
-            //             Age = s.Age,Email = u.Email,Image = s.Image,FirstName = s.FirstName
+            //             Age = s.DayOfbirthday,Email = u.Email,Image = s.Image,FirstName = s.FirstName
             //             ,LastName = s.LastName,MiddleName = s.MiddleName,PhoneNumber = u.PhoneNumber,
             //             GroupId = s.GroupIdOf.Value
             //
@@ -98,7 +105,7 @@ namespace BLL.Services
             //       g=>g.Id, 
             //       (u, s) =>new StudentVM()
             //       {
-            //           Age = u.Age,Email = u.Email,Image = u.Image,FirstName = u.FirstName
+            //           Age = u.DayOfbirthday,Email = u.Email,Image = u.Image,FirstName = u.FirstName
             //           ,LastName = u.LastName,MiddleName = u.MiddleName,PhoneNumber = u.PhoneNumber,
             //           GroupId = u.GroupId,
             //           Group = new GroupVM()
@@ -109,7 +116,7 @@ namespace BLL.Services
             //                   s => s.Id, 
             //                   (s, u) =>new TeacherVM()
             //                   {
-            //                       Age = s.Age,Email = u.Email,Image = s.Image,FirstName = s.FirstName
+            //                       Age = s.DayOfbirthday,Email = u.Email,Image = s.Image,FirstName = s.FirstName
             //                       ,LastName = s.LastName,MiddleName = s.MiddleName,PhoneNumber = u.PhoneNumber,
             //                       Group = _context.Groups.Where(st=>st.TeacherIdOf==u.Id).Select(gr=>new GroupVM()
             //                       {
@@ -123,7 +130,7 @@ namespace BLL.Services
             //                   s => s.Id, 
             //                   (s, u) =>new StudentVM()
             //                   {
-            //                       Age = s.Age,Email = u.Email,Image = s.Image,FirstName = s.FirstName
+            //                       Age = s.DayOfbirthday,Email = u.Email,Image = s.Image,FirstName = s.FirstName
             //                       ,LastName = s.LastName,MiddleName = s.MiddleName,PhoneNumber = u.PhoneNumber
             //
             //                   }).ToList()
@@ -142,12 +149,7 @@ namespace BLL.Services
             return null; //await GetJoinStudents(students); ;
         }
 
-        public async Task<List<StudentVM>> GetStudentsByAge(int a, int b)
-        {
-            var students = _context.Students.Where(st => st.Age >= a && st.Age <= b).AsQueryable();
 
-            return await GetJoinStudents(students);
-        }
 
         public async Task<List<StudentVM>> GetStudentsByGroup(long GroupId)
         {
@@ -169,7 +171,7 @@ namespace BLL.Services
                 Name = $"{student.FirstName} {student.LastName}  {student.MiddleName}",
                 NameGroup = student.Group.Name,
                 Email = student.User.Email,
-                Age = student.Age,
+                DayOfbirthday = student.DayOfbirthday,
                 Image = student.Image,
                 PhoneNumber = student.User.PhoneNumber,
                 GroupId = student.GroupId.Value,
@@ -182,23 +184,32 @@ namespace BLL.Services
             return await student;
         }
 
-        public async Task<bool> Create(StudentVM model)
+
+        public async Task<bool> Create(StudentRegisterVM model)
         {
-            var newstudent = new StudentVM()
+
+            if (_userManager.FindByEmailAsync(model.Email).Result == null)
             {
-
-
-            };
-            var user = new DbUser()
-            {
-
-            };
-            //       var result = _userManager.CreateAsync(user, model.Password).Result;
-
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return true;
+                var student = new Student()
+                {
+                    DayOfbirthday = model.DayOfbirthday,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName,
+                    GroupId = model.GroupId
+                };
+                var user = new DbUser()
+                {
+                    Email = model.Email,
+                    UserName = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    Student = student,
+                };
+                var result = _userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
+                result = _userManager.AddToRoleAsync(user, "Student").Result;
+                return result.Succeeded;
+            }
+            return false;
         }
-
-
     }
 }

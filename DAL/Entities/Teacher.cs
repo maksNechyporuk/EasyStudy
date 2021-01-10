@@ -17,7 +17,7 @@ namespace DAL.Entities
         public string Image { get; set; }
 
         [Range(0, 130, ErrorMessage = "Error")]
-        public double Age { get; set; }
+        public DateTime DayOfbirthday { get; set; }
 
         [ForeignKey("GroupIdOf")]
         public long? GroupId { get; set; }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace EasyStudy.Controllers
+namespace EasyStudyStudent.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -39,10 +39,10 @@ namespace EasyStudy.Controllers
         }
 
         [HttpGet]
-        [Route("students/searchByName/{Name}")]
-        public async Task<List<StudentVM>> GetStudentsByName([FromRoute] string Name)
+        [Route("students/searchByName/{name}")]
+        public async Task<List<StudentVM>> GetStudentsByName([FromRoute] string name)
         {
-            var list = _studentService.GetStudentsByName(Name);
+            var list = _studentService.GetStudentsByName(name);
             return await list;
         }
 
@@ -55,10 +55,10 @@ namespace EasyStudy.Controllers
         }
 
         [HttpGet]
-        [Route("students/searchByTeacher/{Id}")]
-        public async Task<List<StudentVM>> GetStudentsByTeacher([FromRoute] long Id)
+        [Route("students/searchByTeacher/{id}")]
+        public async Task<List<StudentVM>> GetStudentsByTeacher([FromRoute] long id)
         {
-            var list = _studentService.GetStudentsByTeacher(Id);
+            var list = _studentService.GetStudentsByTeacher(id);
             return await list;
         }
         [HttpGet]
@@ -73,6 +73,22 @@ namespace EasyStudy.Controllers
         {
             var list = _studentService.GetStudentsByGroup(Id);
             return await list;
+        }
+        [HttpPut]
+        [Route("students/Register")]
+        public async Task<IActionResult> RegisterStudent([FromBody] StudentRegisterVM model)
+        {
+            var  rezult = await _studentService.Create(model);
+            if (rezult)
+            {
+                return Ok();
+            }
+            else
+            {
+                var invalid = new Dictionary<string, string>();
+                invalid.Add("email", "Користувач з даною електронною поштою уже зареєстрований");
+                return BadRequest(invalid);
+            }
         }
     }
 }

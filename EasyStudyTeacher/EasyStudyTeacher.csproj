@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
@@ -13,6 +13,32 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
+    <Content Include="ClientApp\src\components\auth\Register\actions.js" />
+    <Content Include="ClientApp\src\components\auth\Register\index.js" />
+    <Content Include="ClientApp\src\components\auth\Register\reducer.js" />
+    <Content Include="ClientApp\src\components\auth\Register\scenes\RegisterPage.js" />
+    <Content Include="ClientApp\src\components\auth\Register\scenes\validate.js" />
+    <Content Include="ClientApp\src\components\auth\Register\service.js" />
+    <Content Include="ClientApp\src\components\auth\Register\types.js" />
+    <Content Include="ClientApp\src\components\common\AlertGroup.js" />
+    <Content Include="ClientApp\src\components\common\CaptchaFieldGroup.js" />
+    <Content Include="ClientApp\src\components\common\captcha\captchaService.js" />
+    <Content Include="ClientApp\src\components\common\captcha\index.js" />
+    <Content Include="ClientApp\src\components\common\captcha\reducer.js" />
+    <Content Include="ClientApp\src\components\common\cropper\CropperModal.js" />
+    <Content Include="ClientApp\src\components\common\cropper\CropperPageAnySize.js" />
+    <Content Include="ClientApp\src\components\common\cropper\Modal.scss" />
+    <Content Include="ClientApp\src\components\common\eclipse\index.css" />
+    <Content Include="ClientApp\src\components\common\eclipse\index.css.map" />
+    <Content Include="ClientApp\src\components\common\eclipse\index.js" />
+    <Content Include="ClientApp\src\components\common\eclipse\index.scss" />
+    <Content Include="ClientApp\src\components\common\FileFieldGroup.js" />
+    <Content Include="ClientApp\src\components\common\ImageFieldGroupCropper.js" />
+    <Content Include="ClientApp\src\components\common\PhoneFieldGroup.js" />
+    <Content Include="ClientApp\src\components\common\recaptcha\RecaptchaGroup.js" />
+    <Content Include="ClientApp\src\components\common\TextFieldGroup.js" />
+    <Content Include="ClientApp\src\components\routes\adminRoutes.js" />
+    <Content Include="ClientApp\src\components\routes\defaultRoutes.js" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
@@ -38,32 +64,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.6.3" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj" />
     <ProjectReference Include="..\DAL\DAL.csproj" />
+    <ProjectReference Include="..\JWT.Token.Service\JWT.Token.Service.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

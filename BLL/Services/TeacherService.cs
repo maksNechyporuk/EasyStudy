@@ -5,8 +5,10 @@ using DAL.Entities;
 using BLL.Interfaces;
 using BLL.Models;
 using BLL.Models.TeacherModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace BLL.Services
 {
@@ -15,13 +17,18 @@ namespace BLL.Services
         private readonly EFContext _context;
         private readonly IConfiguration _configuration;
         private readonly IStudentService _studentService;
-
+        private readonly UserManager<DbUser> _userManager;
+        private readonly SignInManager<DbUser> _signInManager;
         public TeacherService(EFContext context,
-            IConfiguration configuration, IStudentService studentService)
+            IConfiguration configuration, IStudentService studentService,
+            UserManager<DbUser> userManager,
+            SignInManager<DbUser> signInManager)
         {
             _context = context;
             _configuration = configuration;
             _studentService = studentService;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
         public async Task<List<TeacherVM>> GetJoinTeachers(IQueryable<Teacher> teachers)
         {
@@ -31,13 +38,13 @@ namespace BLL.Services
                     Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
                     NameGroup = x.Group.Name,
                     Email = x.User.Email,
-                    Age = x.Age,
+                    DayOfbirthday = x.DayOfbirthday,
                     Image = x.Image,
                     PhoneNumber = x.User.PhoneNumber,
                     GroupId = x.GroupId.Value,
                     Students = x.Group.Students.Select(st => new StudentVM()
                     {
-                        Age = st.Age,
+                        DayOfbirthday = st.DayOfbirthday,
                         Email = st.User.Email,
                         Image = st.Image,
                         Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
@@ -67,9 +74,9 @@ namespace BLL.Services
             return await GetJoinTeachers(teachers); ;
         }
 
-        public async Task<List<TeacherVM>> GetTeachersByAge(int a, int b)
+        public async Task<List<TeacherVM>> GetTeachersByAge(DateTime a, DateTime b)
         {
-            var teachers = _context.Teachers.Where(t => t.Age >= a && t.Age <= b).AsQueryable();
+            var teachers = _context.Teachers.Where(t => t.DayOfbirthday >= a && t.DayOfbirthday <= b).AsQueryable();
 
             return await GetJoinTeachers(teachers);
         }
@@ -82,13 +89,13 @@ namespace BLL.Services
                       Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
                       NameGroup = x.Group.Name,
                       Email = x.User.Email,
-                      Age = x.Age,
+                      DayOfbirthday = x.DayOfbirthday,
                       Image = x.Image,
                       PhoneNumber = x.User.PhoneNumber,
                       GroupId = x.GroupId.Value,
                       Students = x.Group.Students.Select(st => new StudentVM()
                       {
-                          Age = st.Age,
+                          DayOfbirthday = st.DayOfbirthday,
                           Email = st.User.Email,
                           Image = st.Image,
                           Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
@@ -97,9 +104,6 @@ namespace BLL.Services
                           NameTeacher = $"{st.Group.Teacher.FirstName} {st.Group.Teacher.LastName}  {st.Group.Teacher.MiddleName}",
                           PhoneNumber = st.User.PhoneNumber,
                           TeacherId = st.Group.TeacherId.Value
-
-
-
                       }
                       ).ToList()
                   }
@@ -114,7 +118,7 @@ namespace BLL.Services
             //     st => st.Group.Students.Where(st=>st.Id==StudentId).Select(
             //         st=> new StudentVM()
             //         {
-            //             Age = st.Age,
+            //             Age = st.DayOfbirthday,
             //             Email = st.User.Email,
             //             Image = st.Image,
             //             Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
@@ -134,7 +138,7 @@ namespace BLL.Services
             //     st => st.Group.TeacherId,
             //     (s, st) => new TeacherVM()
             //     {
-            //         Age = s.Age,
+            //         Age = s.DayOfbirthday,
             //         Image = s.Image,
             //         GroupId = s.GroupId.Value,
             //     }).ToList();
@@ -151,13 +155,13 @@ namespace BLL.Services
                 Name = $"{student.FirstName} {student.LastName}  {student.MiddleName}",
                 NameGroup = student.Group.Name,
                 Email = student.User.Email,
-                Age = student.Age,
+                DayOfbirthday = student.DayOfbirthday,
                 Image = student.Image,
                 PhoneNumber = student.User.PhoneNumber,
                 GroupId = student.GroupId.Value,
                 Students = student.Group.Students.Select(st => new StudentVM()
                 {
-                    Age = st.Age,
+                    DayOfbirthday = st.DayOfbirthday,
                     Email = st.User.Email,
                     Image = st.Image,
                     Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
@@ -172,6 +176,32 @@ namespace BLL.Services
 
 
             return await teacher;
+        }
+
+        public async Task<bool> Create(TeacherRegisterVM model)
+        {
+            if (_userManager.FindByEmailAsync(model.Email).Result == null)
+            {
+                var teacher = new Teacher()
+                {
+                    DayOfbirthday = model.DayOfbirthday,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName
+                };
+                var user = new DbUser()
+                {
+                    Email = model.Email,
+                    UserName = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    Teacher = teacher
+                };
+                var result = _userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
+                result = _userManager.AddToRoleAsync(user, "Teacher").Result;
+                return result.Succeeded;
+            }
+            return false;
+
         }
     }
 }

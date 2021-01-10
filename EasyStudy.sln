@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyStudyTeacher", "EasyStudyTeacher\EasyStudyTeacher.csproj", "{984B2F9F-5035-4908-B646-073489CEB9E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyStudyStudent", "EasyStudyStudent\EasyStudyStudent.csproj", "{F7BCD4CE-67E4-46DD-AF1E-D4531BA668EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyStudyStudent", "EasyStudyStudent\EasyStudyStudent.csproj", "{F7BCD4CE-67E4-46DD-AF1E-D4531BA668EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{D7819692-102A-4564-8E10-EE79075A5808}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLL", "BLL\BLL.csproj", "{D7819692-102A-4564-8E10-EE79075A5808}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{4310F321-AECD-4B3A-B433-7F54353F1F02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{4310F321-AECD-4B3A-B433-7F54353F1F02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Token.Service", "JWT.Token.Service\JWT.Token.Service.csproj", "{5665D785-B7BC-4410-A76A-88ACEA28BCA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{4310F321-AECD-4B3A-B433-7F54353F1F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4310F321-AECD-4B3A-B433-7F54353F1F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4310F321-AECD-4B3A-B433-7F54353F1F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5665D785-B7BC-4410-A76A-88ACEA28BCA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5665D785-B7BC-4410-A76A-88ACEA28BCA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5665D785-B7BC-4410-A76A-88ACEA28BCA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5665D785-B7BC-4410-A76A-88ACEA28BCA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

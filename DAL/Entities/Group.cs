@@ -14,7 +14,7 @@ namespace DAL.Entities
         public long Id { get; set; }
 
         [Required, StringLength(maximumLength: 250)]
-        public string Name { get; set; }
+        public string Name { get;  set; }
 
         [ForeignKey("TeacherIdOf")]
         public long? TeacherId { get; set; }

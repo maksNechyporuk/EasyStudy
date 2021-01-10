@@ -18,7 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-
+using Microsoft.AspNetCore.HttpOverrides;
+using JWT.Token.Service;
 
 namespace EasyStudy
 {
@@ -28,6 +29,7 @@ namespace EasyStudy
         {
             Configuration = configuration;
         }
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -81,6 +83,7 @@ namespace EasyStudy
             });
             services.AddTransient<IStudentService, StudentService>();
             services.AddTransient<ITeacherService, TeacherService>();
+            services.AddTransient<IJWTTokenService, JWTTokenService>();
 
             services.AddDbContext<EFContext>(options =>
                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
@@ -89,7 +92,7 @@ namespace EasyStudy
                 .AddEntityFrameworkStores<EFContext>()
                 .AddDefaultTokenProviders();
 
-
+            services.AddSession();
             services.Configure<IdentityOptions>(options =>
             {
                 // Default Password settings.
@@ -123,14 +126,21 @@ namespace EasyStudy
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            //  app.UseHttpsRedirection();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+            app.UseSession();
             app.UseSpaStaticFiles();
+            app.UseStaticFiles();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
+            //    app.UseCors("CorsApi");
+
             app.UseAuthentication();
             app.UseAuthorization();
-            //  app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
@@ -151,5 +161,6 @@ namespace EasyStudy
             SeederDB.SeedData(app.ApplicationServices, this.Configuration);
 
         }
+
     }
 }

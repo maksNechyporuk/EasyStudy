@@ -12,6 +12,8 @@ namespace DAL.Entities
          DbUserRole, IdentityUserLogin<long>,
          IdentityRoleClaim<long>, IdentityUserToken<long>>
     {
+
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<Student> Students { get; set; }
