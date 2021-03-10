@@ -1,3 +1,0 @@
-export const REGISTER_STARTED = "auth/REGISTER_STARTED";
-export const REGISTER_SUCCESS = "auth/REGISTER_SUCCESS";
-export const REGISTER_FAILED = "auth/REGISTER_FAILED";

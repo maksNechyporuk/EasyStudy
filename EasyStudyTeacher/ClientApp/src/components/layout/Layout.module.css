@@ -1,0 +1,51 @@
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  position: absolute;
+  left: 0;
+  bottom: 1.5vw;
+  width: 100%;
+  height: 8vh;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.language:nth-child(2n)::before {
+  content: " ";
+  background: red;
+  width: 0.01vw;
+  height: 4.5vh;
+  float: left;
+  margin-right: 2vw;
+}
+
+.language:nth-child(2n)::after {
+  content: " ";
+  background: red;
+  width: 0.01vw;
+  height: 4.5vh;
+  float: right;
+  margin-left: 2vw;
+}
+
+.language {
+  color: gray;
+  border-style: none;
+  font-size: 3vw;
+  font-weight: 700;
+  margin-right: 2vw;
+}
+
+.active-language {
+  color: black;
+}
+
+.mainLayout {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}

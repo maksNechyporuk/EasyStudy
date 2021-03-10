@@ -84,6 +84,7 @@ namespace EasyStudy
             services.AddTransient<IStudentService, StudentService>();
             services.AddTransient<ITeacherService, TeacherService>();
             services.AddTransient<IJWTTokenService, JWTTokenService>();
+            services.AddTransient<IGroupService, GroupService>();
 
             services.AddDbContext<EFContext>(options =>
                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));

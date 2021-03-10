@@ -32,11 +32,12 @@ namespace BLL.Services
         }
         public async Task<List<TeacherVM>> GetJoinTeachers(IQueryable<Teacher> teachers)
         {
-            return await teachers.Select(x =>
+            var list = await teachers.Select(x =>
                 new TeacherVM()
                 {
+                    Id = x.Id,
                     Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
-                    NameGroup = x.Group.Name,
+                    NameGroup = x.Group.Name != null ? x.Group.Name : " - ",
                     Email = x.User.Email,
                     DayOfbirthday = x.DayOfbirthday,
                     Image = x.Image,
@@ -44,6 +45,7 @@ namespace BLL.Services
                     GroupId = x.GroupId.Value,
                     Students = x.Group.Students.Select(st => new StudentVM()
                     {
+                        Id = st.Id,
                         DayOfbirthday = st.DayOfbirthday,
                         Email = st.User.Email,
                         Image = st.Image,
@@ -53,13 +55,11 @@ namespace BLL.Services
                         NameTeacher = $"{st.Group.Teacher.FirstName} {st.Group.Teacher.LastName}  {st.Group.Teacher.MiddleName}",
                         PhoneNumber = st.User.PhoneNumber,
                         TeacherId = st.Group.TeacherId.Value
-
-
-
                     }
                     ).ToList()
                 }
             ).ToListAsync(); ;
+            return list;
         }
 
         public async Task<List<TeacherVM>> GetTeachers()
@@ -86,30 +86,18 @@ namespace BLL.Services
             var teacher = _context.Teachers.Where(t => t.GroupId == GroupId).Select(x =>
                   new TeacherVM()
                   {
+                      Id = x.Id,
                       Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
                       NameGroup = x.Group.Name,
                       Email = x.User.Email,
                       DayOfbirthday = x.DayOfbirthday,
                       Image = x.Image,
                       PhoneNumber = x.User.PhoneNumber,
-                      GroupId = x.GroupId.Value,
-                      Students = x.Group.Students.Select(st => new StudentVM()
-                      {
-                          DayOfbirthday = st.DayOfbirthday,
-                          Email = st.User.Email,
-                          Image = st.Image,
-                          Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
-                          GroupId = st.GroupId.Value,
-                          NameGroup = st.Group.Name,
-                          NameTeacher = $"{st.Group.Teacher.FirstName} {st.Group.Teacher.LastName}  {st.Group.Teacher.MiddleName}",
-                          PhoneNumber = st.User.PhoneNumber,
-                          TeacherId = st.Group.TeacherId.Value
-                      }
-                      ).ToList()
+                      GroupId = x.GroupId.Value
                   }
-            ).SingleOrDefaultAsync();
+            ).FirstOrDefault();
 
-            return await teacher;
+            return teacher;
         }
 
         public async Task<TeacherVM> GetTeachersByStudent(long StudentId)
@@ -196,12 +184,25 @@ namespace BLL.Services
                     PhoneNumber = model.PhoneNumber,
                     Teacher = teacher
                 };
-                var result = _userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
+                var result = _userManager.CreateAsync(user, model.Password).Result;
                 result = _userManager.AddToRoleAsync(user, "Teacher").Result;
                 return result.Succeeded;
             }
             return false;
 
+        }
+
+        public async Task<List<TeacherVM>> GetTeachersWithoutGroup()
+        {
+            return await _context.Teachers.Where((item) => item.GroupId == null).Select(teacher => new TeacherVM()
+            {
+                Id = teacher.Id,
+                Name = $"{teacher.FirstName} {teacher.LastName}  {teacher.MiddleName}",
+                Email = teacher.User.Email,
+                DayOfbirthday = teacher.DayOfbirthday,
+                Image = teacher.Image,
+                PhoneNumber = teacher.User.PhoneNumber,
+            }).ToListAsync();
         }
     }
 }

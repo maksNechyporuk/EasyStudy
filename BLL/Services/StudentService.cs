@@ -41,6 +41,7 @@ namespace BLL.Services
             var list = students.Select(x =>
                 new StudentVM
                 {
+                    Id = x.Id,
                     Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
                     NameGroup = x.Group.Name,
                     Email = x.User.Email,
@@ -210,6 +211,18 @@ namespace BLL.Services
                 return result.Succeeded;
             }
             return false;
+        }
+        public async Task<List<StudentVM>> GetStudentsWithoutGroup()
+        {
+            return await _context.Students.Where((item) => item.GroupId == null).Select(student => new StudentVM()
+            {
+                Name = $"{student.FirstName} {student.LastName}  {student.MiddleName}",
+                Email = student.User.Email,
+                DayOfbirthday = student.DayOfbirthday,
+                Image = student.Image,
+                PhoneNumber = student.User.PhoneNumber,
+                Id = student.Id
+            }).ToListAsync();
         }
     }
 }

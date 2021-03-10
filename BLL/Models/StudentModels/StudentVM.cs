@@ -7,6 +7,7 @@ namespace BLL.Models
 {
     public class StudentVM : AccountVM
     {
+        public long Id { get; set; }
         public string Image { get; set; }
         public string Name { get; set; }
         public DateTime DayOfbirthday { get; set; }

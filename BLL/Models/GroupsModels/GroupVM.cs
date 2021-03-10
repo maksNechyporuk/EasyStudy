@@ -7,6 +7,7 @@ namespace BLL.Models.GroupsModels
     {
         public long Id { get; set; }
         public string Name { get; set; }
-         
+        public string TeacherName { get; set; }
+        public int QuantityOfStudents { get; set; }
     }
 }

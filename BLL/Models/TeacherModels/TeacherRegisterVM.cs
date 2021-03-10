@@ -15,8 +15,6 @@ namespace BLL.Models.TeacherModels
         [Required(ErrorMessage = "Поле не може бути пустим!")]
 
         public string MiddleName { get; set; }
-
-        [Required(ErrorMessage = "Поле не може бути пустим!")]
         public DateTime DayOfbirthday { get; set; }
     }
 }
