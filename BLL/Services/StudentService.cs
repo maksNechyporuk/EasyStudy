@@ -9,6 +9,7 @@ using BLL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using BLL.Models.TeacherModels;
 
 namespace BLL.Services
 {
@@ -18,16 +19,18 @@ namespace BLL.Services
         private readonly IConfiguration _configuration;
         private readonly UserManager<DbUser> _userManager;
         private readonly SignInManager<DbUser> _signInManager;
-
+        private readonly IGroupService _groupService;
         public StudentService(EFContext context,
             IConfiguration configuration,
             UserManager<DbUser> userManager,
-            SignInManager<DbUser> signInManager)
+            SignInManager<DbUser> signInManager,
+            IGroupService groupService)
         {
             _context = context;
             _configuration = configuration;
             _userManager = userManager;
             _signInManager = signInManager;
+            _groupService = groupService;
         }
         public async Task<List<StudentVM>> GetStudentsByAge(int a, int b)
         {
@@ -38,20 +41,17 @@ namespace BLL.Services
         }
         public async Task<List<StudentVM>> GetJoinStudents(IQueryable<Student> students)
         {
-            var list = students.Select(x =>
+            var list = await students.Select(x =>
                 new StudentVM
                 {
                     Id = x.Id,
                     Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
-                    NameGroup = x.Group.Name,
+                    NameGroup = x.Group.Name != null ? x.Group.Name : " - ",
                     Email = x.User.Email,
                     DayOfbirthday = x.DayOfbirthday,
-                    Image = x.Image,
+                    Image = x.Image != null ? x.Image : " - ",
                     PhoneNumber = x.User.PhoneNumber,
-                    GroupId = x.GroupId.Value,
-                    NameTeacher =
-                        $"{x.Group.Teacher.FirstName} {x.Group.Teacher.LastName}  {x.Group.Teacher.MiddleName}",
-                    TeacherId = x.Group.TeacherId.Value
+                    GroupId = x.GroupId.Value
                 }
             ).ToListAsync();
             // var listStudent =
@@ -79,7 +79,7 @@ namespace BLL.Services
             //             }
             //
             //         }).ToList();
-            return await list;
+            return list;
         }
 
 
@@ -169,6 +169,9 @@ namespace BLL.Services
         {
             var student = _context.Students.Where(st => st.Id == StudentId).Select(student => new StudentVM
             {
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+                MiddleName = student.MiddleName,
                 Name = $"{student.FirstName} {student.LastName}  {student.MiddleName}",
                 NameGroup = student.Group.Name,
                 Email = student.User.Email,
@@ -223,6 +226,101 @@ namespace BLL.Services
                 PhoneNumber = student.User.PhoneNumber,
                 Id = student.Id
             }).ToListAsync();
+        }
+        public async Task<bool> DeleteStudents(int[] ids)
+        {
+            try
+            {
+                foreach (var id in ids)
+                {
+                    var student = _context.Students.Where((item) => item.Id == id).FirstOrDefault();
+
+                    if (student != null)
+                    {
+                        var group = _context.Groups.FirstOrDefault((item) => item.TeacherId == student.Id);
+                        if (group != null)
+                        {
+                            group.Students.Remove(student);
+                        }
+
+                        _context.Students.Remove(student);
+
+                        await _context.SaveChangesAsync();
+
+                        var user = _context.Users.FirstOrDefault((item) => item.Id == id);
+                        if (user != null)
+                        {
+                            await _userManager.DeleteAsync(user);
+                        }
+                    }
+                }
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                return false;
+
+            }
+
+        }
+
+        public async Task<bool> CreateStudent(TeacherCreateVM model)
+        {
+            if (_userManager.FindByEmailAsync(model.Email).Result == null)
+            {
+                var student = new Student()
+                {
+                    DayOfbirthday = model.DayOfbirthday,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName
+                };
+                var user = new DbUser()
+                {
+                    Email = model.Email,
+                    UserName = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    Student = student
+                };
+                var result = _userManager.CreateAsync(user, "Qwerty1234").Result;
+                result = _userManager.AddToRoleAsync(user, "Student").Result;
+                return result.Succeeded;
+            }
+            return false;
+        }
+        public async Task<bool> UpdateStudent(TeacherCreateVM model)
+        {
+            var student = _context.Students.Where((item) => item.Id == model.Id).SingleOrDefault();
+            if (student != null)
+            {
+                var newStudent = new Student()
+                {
+                    DayOfbirthday = model.DayOfbirthday,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName
+                };
+
+                student.DayOfbirthday = model.DayOfbirthday;
+                student.FirstName = model.FirstName;
+                student.LastName = model.LastName;
+                student.MiddleName = model.MiddleName;
+
+                var user = await _userManager.FindByIdAsync(student.Id.ToString());
+                if (user != null)
+                {
+                    user.Email = model.Email;
+                    user.PhoneNumber = model.PhoneNumber;
+                    user.UserName = model.Email;
+                    var result = _userManager.UpdateAsync(user).Result;
+                    return result.Succeeded;
+                }
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BLL.Interfaces;
 using BLL.Models;
+using BLL.Models.TeacherModels;
 using DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -55,18 +57,20 @@ namespace EasyStudyStudent.Controllers
         }
 
         [HttpGet]
-        [Route("searchByTeacher/{id}")]
-        public async Task<List<StudentVM>> GetStudentsByTeacher([FromRoute] long id)
+        [Route("searchByTeacher/")]
+        public async Task<List<StudentVM>> GetStudentsByTeacher(long id)
         {
             var list = _studentService.GetStudentsByTeacher(id);
             return await list;
         }
+
         [HttpGet]
-        [Route("searchById/{Id}")]
-        public async Task<StudentVM> GetStudentById([FromRoute] long Id)
+        [Route("searchById")]
+        public async Task<StudentVM> GetStudentById(long Id)
         {
             return await _studentService.GetStudentById(Id);
         }
+
         [HttpGet]
         [Route("searchByGroup")]
         public async Task<List<StudentVM>> GetStudentsByGroup(long Id)
@@ -74,6 +78,7 @@ namespace EasyStudyStudent.Controllers
             var list = _studentService.GetStudentsByGroup(Id);
             return await list;
         }
+
         [HttpPut]
         [Route("Register")]
         public async Task<IActionResult> RegisterStudent([FromBody] StudentRegisterVM model)
@@ -101,6 +106,73 @@ namespace EasyStudyStudent.Controllers
                 return Ok(list);
             }
             return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("DeleteStudents")]
+        public async Task<IActionResult> DeleteSelected([FromBody] int[] ids)
+        {
+            try
+            {
+                await _studentService.DeleteStudents(ids);
+                return Ok();
+
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("CreateStudent")]
+        public async Task<IActionResult> CreateStudent([FromBody] TeacherCreateVM model)
+        {
+            try
+            {
+                if (await _studentService.CreateStudent(model))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    var invalid = new Dictionary<string, string>
+                    {
+                        { "email", "Користувач з даною електронною поштою уже створений" }
+                    };
+                    return Ok(invalid);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateStudent")]
+        public async Task<IActionResult> UpdateStudent([FromBody] TeacherCreateVM model)
+        {
+            try
+            {
+                if (await _studentService.UpdateStudent(model))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    var invalid = new Dictionary<string, string>
+                    {
+                        { "email", "Користувач з даною електронною поштою уже створений" }
+                    };
+                    return Ok(invalid);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
     }
 }

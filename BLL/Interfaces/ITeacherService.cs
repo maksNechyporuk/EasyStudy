@@ -11,6 +11,9 @@ namespace BLL.Interfaces
     {
         Task<List<TeacherVM>> GetJoinTeachers(IQueryable<Teacher> teachers);
         Task<List<TeacherVM>> GetTeachers();
+        Task<bool> CreateTeacher(TeacherCreateVM model);
+
+        Task<bool> UpdateTeacher(TeacherCreateVM model);
         Task<List<TeacherVM>> GetTeachersByName(string Name);
         Task<List<TeacherVM>> GetTeachersByAge(DateTime a, DateTime b);
         Task<TeacherVM> GetTeacherByGroup(long GroupId);
@@ -19,7 +22,6 @@ namespace BLL.Interfaces
         Task<bool> Create(TeacherRegisterVM student);
         Task<List<TeacherVM>> GetTeachersWithoutGroup();
         Task<bool> DeleteTeacher(int[] ids);
-
 
     }
 }

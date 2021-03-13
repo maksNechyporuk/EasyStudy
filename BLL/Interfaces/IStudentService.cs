@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DAL.Entities;
 using BLL.Models;
+using BLL.Models.TeacherModels;
 
 namespace BLL.Interfaces
 {
@@ -17,6 +18,8 @@ namespace BLL.Interfaces
         Task<List<StudentVM>> GetStudentsByTeacher(long TeacherId);
         Task<StudentVM> GetStudentById(long StudentId);
         Task<bool> Create(StudentRegisterVM student);
-
+        Task<bool> CreateStudent(TeacherCreateVM model);
+        Task<bool> DeleteStudents(int[] ids);
+        Task<bool> UpdateStudent(TeacherCreateVM model);
     }
 }

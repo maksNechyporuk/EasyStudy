@@ -22,3 +22,8 @@ export const setAuthorisationToken = (token) => {
     delete axios.defaults.headers.common["Authorization"];
   }
 };
+
+export const logout = () => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("refreshToken");
+};

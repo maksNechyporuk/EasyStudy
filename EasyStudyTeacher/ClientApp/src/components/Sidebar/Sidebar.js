@@ -4,7 +4,10 @@ import { useHistory } from "react-router";
 import { ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import jwt from "jsonwebtoken";
 import { FaChalkboardTeacher, FaChild, FaBook } from "react-icons/fa";
+import { CgLogOut } from "react-icons/cg";
 import menuImage from "../../images/menuBack.jpg";
+import { logout } from "../../services/jwtService";
+import { getRegisterPageRoute } from "../../routes/routes";
 import "react-pro-sidebar/dist/css/styles.css";
 
 const Sidebar = ({ state, setState }) => {
@@ -44,6 +47,16 @@ const Sidebar = ({ state, setState }) => {
           icon={<FaChild />}
         >
           {t("Admin.GroupStudent")}
+        </MenuItem>
+        <MenuItem
+          active={state.isShowManageStudent}
+          onClick={() => {
+            logout();
+            history.push(getRegisterPageRoute());
+          }}
+          icon={<CgLogOut />}
+        >
+          Вийти
         </MenuItem>
       </>
     );

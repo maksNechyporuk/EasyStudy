@@ -7,6 +7,7 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 
 import "./MainPage.css";
+import StudentPage from "../Student/Student";
 
 const MainPage = () => {
   let emptyGroup = {
@@ -38,7 +39,13 @@ const MainPage = () => {
       ) : (
         <div></div>
       )}
-      {pageState.isShowManageStudent ? <>isShowManageStudent</> : <div></div>}
+      {pageState.isShowManageStudent ? (
+        <>
+          <StudentPage />
+        </>
+      ) : (
+        <div></div>
+      )}
     </>
   );
 };

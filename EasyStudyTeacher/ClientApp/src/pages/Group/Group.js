@@ -194,6 +194,7 @@ const GroupPage = () => {
             setGroup(emptyGroup);
             setSelectedTeacher(null);
             setSelectedStudents(null);
+            setGroupEditDialog(false);
           },
           (err) => {
             //setErrors(err.response.data);
@@ -237,6 +238,7 @@ const GroupPage = () => {
             setGroup(emptyGroup);
             setSelectedTeacher(null);
             setSelectedStudents(null);
+            setCreateDialog(false);
           },
           (err) => {
             //setErrors(err.response.data);
@@ -345,6 +347,7 @@ const GroupPage = () => {
         async (response) => {
           console.log("getTeacherByGroup=>", response);
           setSelectedTeacher(response.data);
+          setGroupEditDialog(false);
         },
         (err) => {
           //setErrors(err.response.data);

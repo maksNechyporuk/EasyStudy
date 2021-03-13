@@ -32,7 +32,6 @@ const StudentsCreateGroupDataTable = ({ setSelected, selection, idEdit }) => {
     teacherId: "",
   };
   const [students, setStudents] = useState([]);
-  const [selectedStudents, setSelectedStudents] = useState([]);
   const [inProgress, setInProgress] = useState(true);
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
@@ -49,9 +48,10 @@ const StudentsCreateGroupDataTable = ({ setSelected, selection, idEdit }) => {
 
   const getStudents = async () => {
     const response = await getStudentsWithoutGroupAsync();
-    console.log("getStudentsWithoutGroupAsync=>", response);
-    if (idEdit) {
-      console.log("selectedStudentsvvv=>", selection);
+    var a = [];
+    console.log("selection?.length=>", selection?.length);
+    console.log("selection=>", selection);
+    if (idEdit && selection?.length > 0) {
       setStudents([...selection, ...response.data]);
     } else {
       setStudents(response.data);

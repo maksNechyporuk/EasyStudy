@@ -78,8 +78,8 @@ namespace EasyStudy.Controllers
         }
 
         [HttpGet]
-        [Route("GetTeacherById/{Id}")]
-        public async Task<TeacherVM> GetTeacherById([FromRoute] long Id)
+        [Route("GetTeacherById")]
+        public async Task<TeacherVM> GetTeacherById(long Id)
         {
             return await _teacherService.GetTeacherById(Id);
         }
@@ -183,5 +183,72 @@ namespace EasyStudy.Controllers
             return BadRequest();
         }
 
+
+        [HttpPost]
+        [Route("DeleteTeachers")]
+        public async Task<IActionResult> DeleteSelected([FromBody] int[] ids)
+        {
+            try
+            {
+                await _teacherService.DeleteTeacher(ids);
+                return Ok();
+
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("CreateTeacher")]
+        public async Task<IActionResult> CreateTeacher([FromBody] TeacherCreateVM model)
+        {
+            try
+            {
+                if (await _teacherService.CreateTeacher(model))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    var invalid = new Dictionary<string, string>
+                    {
+                        { "email", "Користувач з даною електронною поштою уже створений" }
+                    };
+                    return Ok(invalid);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateTeacher")]
+        public async Task<IActionResult> UpdateTeacher([FromBody] TeacherCreateVM model)
+        {
+            try
+            {
+                if (await _teacherService.UpdateTeacher(model))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    var invalid = new Dictionary<string, string>
+                    {
+                        { "email", "Користувач з даною електронною поштою уже створений" }
+                    };
+                    return Ok(invalid);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

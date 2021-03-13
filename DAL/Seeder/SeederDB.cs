@@ -16,10 +16,10 @@ namespace DAL.Seeder
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<DbUser>>();
                 var managerRole = scope.ServiceProvider.GetRequiredService<RoleManager<DbRole>>();
                 var context = scope.ServiceProvider.GetRequiredService<EFContext>();
-                TeacherSeeder.SeedStudent(userManager, managerRole);
-                GroupSeeder.SeedCategories(context);
+                //TeacherSeeder.SeedStudent(userManager, managerRole);
+                //GroupSeeder.SeedCategories(context);
 
-                StudentSeeder.SeedStudent(userManager, managerRole);
+                //StudentSeeder.SeedStudent(userManager, managerRole);
                 var roleName = "Admin";
                 if (managerRole.FindByNameAsync(roleName).Result == null)
                 {

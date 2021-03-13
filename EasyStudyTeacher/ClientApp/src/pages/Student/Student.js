@@ -36,19 +36,20 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import menuImage from "../../images/menuBack.jpg";
 import "react-pro-sidebar/dist/css/styles.css";
 import { getStudentsByGroupIdAsync } from "../../services/studentsService";
+
 import {
-  getTeacherByGroup,
-  getTeachersAsync,
-  DeleteTeacherAsync,
-  CreateTeacher,
-  UpdateTeacher,
-  GetTeacherById,
-} from "../../services/teacherService";
-import "./Teacher.css";
+  getStudentsAsync,
+  DeleteStudentsAsync,
+  CreateStudent,
+  UpdateStudent,
+  GetStudentById,
+} from "../../services/studentsService";
+
+import "./Student.css";
 import classNames from "classnames";
 
-const TeacherPage = () => {
-  let emptyTeacher = {
+const StudentPage = () => {
+  let emptyStudent = {
     firstName: "",
     lastName: "",
     middleName: "",
@@ -56,8 +57,9 @@ const TeacherPage = () => {
     dayOfbirthday: "",
     phoneNumber: "",
   };
+
   const history = useHistory();
-  const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState(null);
   const [inProgress, setInProgress] = useState(true);
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -65,9 +67,9 @@ const TeacherPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [deleteGroupDialog, setDeleteGroupDialog] = useState(false);
   const [deleteGroupsDialog, setDeleteGroupsDialog] = useState(false);
-  const [teacher, setTeacher] = useState(emptyTeacher);
+  const [student, setStudent] = useState(emptyStudent);
   const [createDialog, setCreateDialog] = useState(false);
-  const [selectedTeacher, setSelectedTeacher] = useState();
+  const [selectedStudent, setSelectedStudent] = useState();
   const [errors, setErrors] = useState({});
   const [editDialog, setGroupEditDialog] = useState(false);
   const [studentsDialog, setStudentsDialog] = useState(false);
@@ -78,22 +80,22 @@ const TeacherPage = () => {
 
   const onInputChange = (e, name) => {
     const val = (e.target && e.target.value) || "";
-    let _group = { ...teacher };
+    let _group = { ...student };
     _group[`${name}`] = val;
 
-    setTeacher(_group);
+    setStudent(_group);
   };
 
   const { t } = useTranslation();
 
   useEffect(() => {
-    getTeacher();
+    getStudent();
   }, []);
 
-  const getTeacher = async () => {
-    const response = await getTeachersAsync();
+  const getStudent = async () => {
+    const response = await getStudentsAsync();
     console.log("response=>", response);
-    setTeachers(response.data);
+    setStudents(response.data);
   };
 
   useEffect(() => {
@@ -123,7 +125,7 @@ const TeacherPage = () => {
   );
 
   const openNew = () => {
-    setTeacher(emptyTeacher);
+    setStudent(emptyStudent);
     setSubmitted(false);
     setCreateDialog(true);
   };
@@ -152,7 +154,7 @@ const TeacherPage = () => {
     </React.Fragment>
   );
   const confirmDeleteGroup = (group) => {
-    setTeacher(group);
+    setStudent(group);
     setDeleteGroupDialog(true);
   };
 
@@ -176,32 +178,30 @@ const TeacherPage = () => {
   const updateGroup = async () => {
     setSubmitted(true);
 
-    if (teacher.firstName.trim()) {
+    if (student.firstName.trim()) {
       let model = {
-        id: teacher.id,
-        firstName: teacher.firstName,
-        lastName: teacher.lastName,
-        middleName: teacher.middleName,
-        email: teacher.email,
-        DayOfbirthday: teacher.dayOfbirthday,
-        phoneNumber: teacher.phoneNumber,
+        id: student.id,
+        firstName: student.firstName,
+        lastName: student.lastName,
+        middleName: student.middleName,
+        email: student.email,
+        DayOfbirthday: student.dayOfbirthday,
+        phoneNumber: student.phoneNumber,
       };
-      await UpdateTeacher(model)
+      await UpdateStudent(model)
         .then(
           async (response) => {
-            setGroupEditDialog(false);
-
             console.log(response);
             setCreateDialog(false);
-            getTeacher();
+            getStudent();
             toast.current.show({
               severity: "success",
               summary: "Successful",
-              detail: "Data updated",
+              detail: "Group Created",
               life: 3000,
             });
-            setTeacher(emptyTeacher);
-            setSelectedTeacher(null);
+            setStudent(emptyStudent);
+            setSelectedStudent(null);
             setSelectedStudents(null);
           },
           (err) => {
@@ -214,33 +214,33 @@ const TeacherPage = () => {
         });
     }
   };
-  const saveTeacher = async () => {
+  const saveStudent = async () => {
     setSubmitted(true);
 
-    if (teacher.firstName.trim()) {
+    if (student.firstName.trim()) {
       let model = {
-        firstName: teacher.firstName,
-        lastName: teacher.lastName,
-        middleName: teacher.middleName,
-        email: teacher.email,
-        dayOfbirthday: teacher.dayOfbirthday,
-        phoneNumber: teacher.phoneNumber,
+        firstName: student.firstName,
+        lastName: student.lastName,
+        middleName: student.middleName,
+        email: student.email,
+        DayOfbirthday: student.dayOfbirthday,
+        phoneNumber: student.phoneNumber,
       };
 
-      await CreateTeacher(model)
+      await CreateStudent(model)
         .then(
           async (response) => {
             console.log(response);
             setCreateDialog(false);
-            getTeacher();
+            getStudent();
             toast.current.show({
               severity: "success",
               summary: "Successful",
               detail: "Teacher Created",
               life: 3000,
             });
-            setTeacher(emptyTeacher);
-            setSelectedTeacher(null);
+            setStudent(emptyStudent);
+            setSelectedStudent(null);
             setSelectedStudents(null);
           },
           (err) => {
@@ -266,7 +266,7 @@ const TeacherPage = () => {
         label="Save"
         icon="pi pi-check"
         className="p-button-text"
-        onClick={saveTeacher}
+        onClick={saveStudent}
       />
     </React.Fragment>
   );
@@ -318,11 +318,11 @@ const TeacherPage = () => {
       selectedGroups.forEach((element) => {
         selectedId.push(element.id);
       });
-      await DeleteTeacherAsync(selectedId)
+      await DeleteStudentsAsync(selectedId)
         .then(
           async (response) => {
             console.log(response);
-            getTeacher();
+            getStudent();
 
             setDeleteGroupsDialog(false);
             setSelectedGroups(null);
@@ -333,7 +333,7 @@ const TeacherPage = () => {
               life: 3000,
             });
 
-            setTeacher(emptyTeacher);
+            setStudent(emptyStudent);
           },
           (err) => {
             //setErrors(err.response.data);
@@ -348,8 +348,8 @@ const TeacherPage = () => {
 
   const editTeacher = async (teacher) => {
     console.log("Teacher=>", teacher);
-    const response = await GetTeacherById(teacher.id);
-    setTeacher({ ...response.data });
+    const response = await GetStudentById(teacher.id);
+    setStudent({ ...response.data });
     console.log("group=>", teacher);
     setGroupEditDialog(true);
   };
@@ -378,12 +378,12 @@ const TeacherPage = () => {
     setDeleteGroupsDialog(true);
   };
   const deleteGroupHandler = async () => {
-    await DeleteTeacherAsync([teacher.id])
+    await DeleteStudentsAsync([student.id])
       .then(
         async (response) => {
           console.log(response);
           setDeleteGroupDialog(false);
-          getTeacher();
+          getStudent();
 
           toast.current.show({
             severity: "success",
@@ -392,7 +392,7 @@ const TeacherPage = () => {
             life: 3000,
           });
 
-          setTeacher(emptyTeacher);
+          setStudent(emptyStudent);
         },
         (err) => {
           //setErrors(err.response.data);
@@ -467,7 +467,7 @@ const TeacherPage = () => {
               ></Toolbar>
               <DataTable
                 ref={dt}
-                value={teachers}
+                value={students}
                 selection={selectedGroups}
                 onSelectionChange={(e) => setSelectedGroups(e.value)}
                 dataKey="id"
@@ -521,9 +521,9 @@ const TeacherPage = () => {
                     className="pi pi-exclamation-triangle p-mr-3"
                     style={{ fontSize: "2rem" }}
                   />
-                  {teacher && (
+                  {student && (
                     <span>
-                      Are you sure you want to delete <b>{teacher.name}</b>?
+                      Are you sure you want to delete <b>{student.name}</b>?
                     </span>
                   )}
                 </div>
@@ -543,43 +543,43 @@ const TeacherPage = () => {
                   <br /> <label htmlFor="firstName">First name</label>
                   <InputText
                     id="firstName"
-                    value={teacher.firstName}
+                    value={student.firstName}
                     onChange={(e) => onInputChange(e, "firstName")}
                     required
                     autoFocus
                     className={classNames({
-                      "p-invalid": submitted && !teacher.firstName,
+                      "p-invalid": submitted && !student.firstName,
                     })}
                   />
-                  {submitted && !teacher.firstName && (
+                  {submitted && !student.firstName && (
                     <small className="p-error">First name is required.</small>
                   )}{" "}
                   <br />
                   <br /> <label htmlFor="middleName">Middle name</label>
                   <InputText
                     id="middleName"
-                    value={teacher.middleName}
+                    value={student.middleName}
                     onChange={(e) => onInputChange(e, "middleName")}
                     required
                     className={classNames({
-                      "p-invalid": submitted && !teacher.middleName,
+                      "p-invalid": submitted && !student.middleName,
                     })}
                   />
-                  {submitted && !teacher.middleName && (
+                  {submitted && !student.middleName && (
                     <small className="p-error">Middle name is required.</small>
                   )}{" "}
                   <br />
                   <br /> <label htmlFor="lastName">Last name</label>
                   <InputText
                     id="lastName"
-                    value={teacher.lastName}
+                    value={student.lastName}
                     onChange={(e) => onInputChange(e, "lastName")}
                     required
                     className={classNames({
-                      "p-invalid": submitted && !teacher.lastName,
+                      "p-invalid": submitted && !student.lastName,
                     })}
                   />
-                  {submitted && !teacher.lastName && (
+                  {submitted && !student.lastName && (
                     <small className="p-error">Last name is required.</small>
                   )}
                   <br />
@@ -587,26 +587,27 @@ const TeacherPage = () => {
                   <label htmlFor="name">Email</label>
                   <InputText
                     id="email"
-                    value={teacher.email}
+                    value={student.email}
                     onChange={(e) => onInputChange(e, "email")}
                     required
                     className={classNames({
-                      "p-invalid": submitted && !teacher.email,
+                      "p-invalid": submitted && !student.email,
                     })}
                   />
-                  {submitted && !teacher.email && (
+                  {submitted && !student.email && (
                     <small className="p-error">Email is required.</small>
                   )}
                   <br />
                   <br /> <label htmlFor="dayOfbirthday">Date</label>
                   <input
                     id="dayOfbirthday"
-                    value={teacher.dayOfbirthday}
+                    value={student.dayOfbirthday}
                     onChange={(e) => onInputChange(e, "dayOfbirthday")}
                     type="date"
+                    required
                     className={"p-inputtext p-component p-filled"}
                   />
-                  {submitted && !teacher.dayOfbirthday && (
+                  {submitted && !student.dayOfbirthday && (
                     <small className="p-error">Date is required.</small>
                   )}
                   <br />
@@ -614,13 +615,13 @@ const TeacherPage = () => {
                   <InputMask
                     id="phoneNumber"
                     mask="999 999 9999"
-                    value={teacher.phoneNumber}
+                    value={student.phoneNumber}
                     onChange={(e) => onInputChange(e, "phoneNumber")}
                     className={classNames({
-                      "p-invalid": submitted && !teacher.phoneNumber,
+                      "p-invalid": submitted && !student.phoneNumber,
                     })}
                   ></InputMask>
-                  {submitted && !teacher.phoneNumber && (
+                  {submitted && !student.phoneNumber && (
                     <small className="p-error">Phone is required.</small>
                   )}
                 </div>
@@ -661,43 +662,43 @@ const TeacherPage = () => {
                   <br /> <label htmlFor="firstName">First name</label>
                   <InputText
                     id="firstName"
-                    value={teacher.firstName}
+                    value={student.firstName}
                     onChange={(e) => onInputChange(e, "firstName")}
                     required
                     autoFocus
                     className={classNames({
-                      "p-invalid": submitted && !teacher.firstName,
+                      "p-invalid": submitted && !student.firstName,
                     })}
                   />
-                  {submitted && !teacher.firstName && (
+                  {submitted && !student.firstName && (
                     <small className="p-error">First name is required.</small>
                   )}{" "}
                   <br />
                   <br /> <label htmlFor="middleName">Middle name</label>
                   <InputText
                     id="middleName"
-                    value={teacher.middleName}
+                    value={student.middleName}
                     onChange={(e) => onInputChange(e, "middleName")}
-                    required
+                    autoFocus
                     className={classNames({
-                      "p-invalid": submitted && !teacher.middleName,
+                      "p-invalid": submitted && !student.middleName,
                     })}
                   />
-                  {submitted && !teacher.middleName && (
+                  {submitted && !student.middleName && (
                     <small className="p-error">Middle name is required.</small>
                   )}{" "}
                   <br />
                   <br /> <label htmlFor="lastName">Last name</label>
                   <InputText
                     id="lastName"
-                    value={teacher.lastName}
+                    value={student.lastName}
                     onChange={(e) => onInputChange(e, "lastName")}
-                    required
+                    autoFocus
                     className={classNames({
-                      "p-invalid": submitted && !teacher.lastName,
+                      "p-invalid": submitted && !student.lastName,
                     })}
                   />
-                  {submitted && !teacher.lastName && (
+                  {submitted && !student.lastName && (
                     <small className="p-error">Last name is required.</small>
                   )}
                   <br />
@@ -705,27 +706,27 @@ const TeacherPage = () => {
                   <label htmlFor="name">Email</label>
                   <InputText
                     id="email"
-                    value={teacher.email}
+                    value={student.email}
                     onChange={(e) => onInputChange(e, "email")}
-                    required
+                    autoFocus
                     className={classNames({
-                      "p-invalid": submitted && !teacher.email,
+                      "p-invalid": submitted && !student.email,
                     })}
                   />
-                  {submitted && !teacher.email && (
+                  {submitted && !student.email && (
                     <small className="p-error">Email is required.</small>
                   )}
                   <br />
                   <br /> <label htmlFor="dayOfbirthday">Date</label>
                   <input
                     id="dayOfbirthday"
-                    value={teacher.dayOfbirthday}
+                    value={student.dayOfbirthday}
                     onChange={(e) => onInputChange(e, "dayOfbirthday")}
                     type="date"
                     required
                     className={"p-inputtext p-component p-filled"}
                   />
-                  {submitted && !teacher.dayOfbirthday && (
+                  {submitted && !student.dayOfbirthday && (
                     <small className="p-error">Date is required.</small>
                   )}
                   <br />
@@ -733,13 +734,13 @@ const TeacherPage = () => {
                   <InputMask
                     id="phoneNumber"
                     mask="999 999 9999"
-                    value={teacher.phoneNumber}
+                    value={student.phoneNumber}
                     onChange={(e) => onInputChange(e, "phoneNumber")}
                     className={classNames({
-                      "p-invalid": submitted && !teacher.phoneNumber,
+                      "p-invalid": submitted && !student.phoneNumber,
                     })}
                   ></InputMask>
-                  {submitted && !teacher.phoneNumber && (
+                  {submitted && !student.phoneNumber && (
                     <small className="p-error">Phone is required.</small>
                   )}
                 </div>
@@ -758,7 +759,7 @@ const TeacherPage = () => {
                     className="pi pi-exclamation-triangle p-mr-3"
                     style={{ fontSize: "2rem" }}
                   />
-                  {teacher && (
+                  {student && (
                     <span>
                       Are you sure you want to delete the selected groups?
                     </span>
@@ -773,4 +774,4 @@ const TeacherPage = () => {
   );
 };
 
-export default TeacherPage;
+export default StudentPage;

@@ -19,16 +19,18 @@ namespace BLL.Services
         private readonly IStudentService _studentService;
         private readonly UserManager<DbUser> _userManager;
         private readonly SignInManager<DbUser> _signInManager;
+        private readonly IGroupService _groupService;
         public TeacherService(EFContext context,
             IConfiguration configuration, IStudentService studentService,
             UserManager<DbUser> userManager,
-            SignInManager<DbUser> signInManager)
+            SignInManager<DbUser> signInManager, IGroupService groupService)
         {
             _context = context;
             _configuration = configuration;
             _studentService = studentService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _groupService = groupService;
         }
         public async Task<List<TeacherVM>> GetJoinTeachers(IQueryable<Teacher> teachers)
         {
@@ -52,13 +54,13 @@ namespace BLL.Services
                         Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
                         GroupId = st.GroupId.Value,
                         NameGroup = st.Group.Name,
-                        NameTeacher = $"{st.Group.Teacher.FirstName} {st.Group.Teacher.LastName}  {st.Group.Teacher.MiddleName}",
+                        NameTeacher = $"{st.Group.Teacher.FirstName} {st.Group.Teacher.LastName} {st.Group.Teacher.MiddleName}",
                         PhoneNumber = st.User.PhoneNumber,
                         TeacherId = st.Group.TeacherId.Value
                     }
                     ).ToList()
                 }
-            ).ToListAsync(); ;
+            ).ToListAsync();
             return list;
         }
 
@@ -138,16 +140,20 @@ namespace BLL.Services
 
         public async Task<TeacherVM> GetTeacherById(long TeacherId)
         {
-            var teacher = _context.Teachers.Where(st => st.Id == TeacherId).Select(student => new TeacherVM()
+            var teacher = _context.Teachers.Where(st => st.Id == TeacherId).Select(teacher => new TeacherVM()
             {
-                Name = $"{student.FirstName} {student.LastName}  {student.MiddleName}",
-                NameGroup = student.Group.Name,
-                Email = student.User.Email,
-                DayOfbirthday = student.DayOfbirthday,
-                Image = student.Image,
-                PhoneNumber = student.User.PhoneNumber,
-                GroupId = student.GroupId.Value,
-                Students = student.Group.Students.Select(st => new StudentVM()
+                FirstName = teacher.FirstName,
+                LastName = teacher.LastName,
+                MiddleName = teacher.MiddleName,
+                Id = teacher.Id,
+                Name = $"{teacher.FirstName} {teacher.MiddleName} {teacher.LastName}",
+                NameGroup = teacher.Group.Name,
+                Email = teacher.User.Email,
+                DayOfbirthday = teacher.DayOfbirthday,
+                Image = teacher.Image,
+                PhoneNumber = teacher.User.PhoneNumber,
+                GroupId = teacher.GroupId.Value,
+                Students = teacher.Group.Students.Select(st => new StudentVM()
                 {
                     DayOfbirthday = st.DayOfbirthday,
                     Email = st.User.Email,
@@ -204,5 +210,103 @@ namespace BLL.Services
                 PhoneNumber = teacher.User.PhoneNumber,
             }).ToListAsync();
         }
+
+        public async Task<bool> DeleteTeacher(int[] ids)
+        {
+            try
+            {
+                foreach (var id in ids)
+                {
+                    var teacher = _context.Teachers.Where((item) => item.Id == id).FirstOrDefault();
+
+                    if (teacher != null)
+                    {
+                        var group = _context.Groups.FirstOrDefault((item) => item.TeacherId == teacher.Id);
+                        if (group != null)
+                        {
+                            await _groupService.DeleteGroup((int)group.Id);
+                        }
+
+
+                        _context.Teachers.Remove(teacher);
+
+                        await _context.SaveChangesAsync();
+
+                        var user = _context.Users.FirstOrDefault((item) => item.Id == id);
+                        if (user != null)
+                        {
+                            await _userManager.DeleteAsync(user);
+                        }
+                    }
+                }
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                return false;
+
+            }
+
+        }
+
+        public async Task<bool> CreateTeacher(TeacherCreateVM model)
+        {
+            if (_userManager.FindByEmailAsync(model.Email).Result == null)
+            {
+                var teacher = new Teacher()
+                {
+                    DayOfbirthday = model.DayOfbirthday,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName
+                };
+                var user = new DbUser()
+                {
+                    Email = model.Email,
+                    UserName = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    Teacher = teacher
+                };
+                var result = _userManager.CreateAsync(user, "Qwerty1234").Result;
+                result = _userManager.AddToRoleAsync(user, "Teacher").Result;
+                return result.Succeeded;
+            }
+            return false;
+        }
+        public async Task<bool> UpdateTeacher(TeacherCreateVM model)
+        {
+            var teacher = _context.Teachers.Where((item) => item.Id == model.Id).SingleOrDefault();
+            if (teacher != null)
+            {
+                var newTeacher = new Teacher()
+                {
+                    DayOfbirthday = model.DayOfbirthday,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName
+                };
+
+                teacher.DayOfbirthday = model.DayOfbirthday;
+                teacher.FirstName = model.FirstName;
+                teacher.LastName = model.LastName;
+                teacher.MiddleName = model.MiddleName;
+
+                var user = await _userManager.FindByIdAsync(teacher.Id.ToString());
+                if (user != null)
+                {
+                    user.Email = model.Email;
+                    user.PhoneNumber = model.PhoneNumber;
+                    user.UserName = model.Email;
+                    var result = _userManager.UpdateAsync(user).Result;
+                    return result.Succeeded;
+                }
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            return false;
+        }
+
     }
 }
