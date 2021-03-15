@@ -191,7 +191,7 @@ namespace BLL.Services
                     Teacher = teacher
                 };
                 var result = _userManager.CreateAsync(user, model.Password).Result;
-                result = _userManager.AddToRoleAsync(user, "Teacher").Result;
+                result = _userManager.AddToRoleAsync(user, "Admin").Result;
                 return result.Succeeded;
             }
             return false;
