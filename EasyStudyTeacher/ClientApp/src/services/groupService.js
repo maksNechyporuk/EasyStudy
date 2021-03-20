@@ -5,7 +5,10 @@ export const getGroupsAsync = async (model) => {
 };
 
 export const createGroup = async (model) => {
-  return await axios.post(`/api/Group/Create`, model);
+  return await axios.post(`/api/Group/Create`, {
+    ...model,
+    SchoolId: localStorage.getItem("schoolId"),
+  });
 };
 
 export const deleteGroup = async (id) => {
@@ -18,4 +21,10 @@ export const deleteSelectedGroups = async (model) => {
 
 export const updateGroupAsync = async (model) => {
   return await axios.put(`/api/Group/Edit`, model);
+};
+
+export const getGroupsBySchoolAsync = async () => {
+  return await axios.get(`/api/Group/getGroupsBySchool`, {
+    params: { id: localStorage.getItem("schoolId") },
+  });
 };

@@ -29,14 +29,14 @@
   background: #f2f2f2;
   width: 100%;
   border: 0;
-  margin: 0 0 15px;
-  padding: 15px;
+  margin: 0 0 1vh;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 2vh;
+  height: 4vh;
 }
 
 .register-page button {
@@ -60,6 +60,7 @@
   display: flex;
   flex-direction: column;
   background-color: white;
-  padding: 3vw;
+  padding: 6vh;
   border-radius: 3vw;
+  max-width: 21vw;
 }

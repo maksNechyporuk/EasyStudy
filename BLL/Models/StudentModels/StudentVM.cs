@@ -18,5 +18,6 @@ namespace BLL.Models
         public long? GroupId { get; set; }
         public string NameTeacher { get; set; }
         public long TeacherId { get; set; }
+        public int SchoolId { get; set; }
     }
 }

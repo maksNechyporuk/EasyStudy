@@ -10,6 +10,7 @@ namespace BLL.Models.GroupsModels
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public int SchoolId { get; set; }
         public int TeacherId { get; set; }
         public int[] StudentsId { get; set; }
     }

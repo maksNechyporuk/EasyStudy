@@ -19,7 +19,10 @@ export const DeleteStudentsAsync = async (model) => {
 };
 
 export const CreateStudent = async (model) => {
-  return await axios.post(`/api/Student/CreateStudent`, model);
+  return await axios.post(`/api/Student/CreateStudent`, {
+    ...model,
+    SchoolId: localStorage.getItem("schoolId"),
+  });
 };
 
 export const UpdateStudent = async (model) => {
@@ -28,4 +31,10 @@ export const UpdateStudent = async (model) => {
 
 export const getStudentsAsync = async () => {
   return await axios.get(`/api/Student/students`);
+};
+
+export const getStudentsBySchoolAsync = async () => {
+  return await axios.get(`/api/Student/getStudentsBySchool`, {
+    params: { id: localStorage.getItem("schoolId") },
+  });
 };

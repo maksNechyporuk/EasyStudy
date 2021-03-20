@@ -50,7 +50,8 @@ namespace BLL.Services
                 group = new Group
                 {
                     Name = model.Name,
-                    TeacherId = model.TeacherId
+                    TeacherId = model.TeacherId,
+                    SchoolId = model.SchoolId
                 };
 
                 _context.Groups.Add(group);
@@ -146,6 +147,20 @@ namespace BLL.Services
         public async Task<List<GroupVM>> GetGroups()
         {
             var list = _context.Groups.Select((item) => new GroupVM
+            {
+                Id = item.Id,
+                Name = item.Name,
+                TeacherName = $"{item.Teacher.FirstName} {item.Teacher.LastName} {item.Teacher.MiddleName}",
+                QuantityOfStudents = item.Students.Count
+            }).ToListAsync();
+
+            return await list;
+        }
+
+        public async Task<List<GroupVM>> GetGroupsBySchool(long schoolId)
+        {
+
+            var list = _context.Groups.Where((item) => item.SchoolId == schoolId).Select((item) => new GroupVM
             {
                 Id = item.Id,
                 Name = item.Name,

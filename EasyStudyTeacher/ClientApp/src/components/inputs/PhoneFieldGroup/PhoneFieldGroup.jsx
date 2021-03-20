@@ -1,5 +1,4 @@
 import React from "react";
-import classnames from "classnames";
 import PropTypes from "prop-types";
 import InputMask from "react-input-mask";
 import styles from "./PhoneFieldGroup.module.css";

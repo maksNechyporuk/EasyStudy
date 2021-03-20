@@ -24,9 +24,18 @@ export const DeleteTeacherAsync = async (model) => {
 };
 
 export const CreateTeacher = async (model) => {
-  return await axios.post(`/api/Teacher/CreateTeacher`, model);
+  return await axios.post(`/api/Teacher/CreateTeacher`, {
+    ...model,
+    SchoolId: localStorage.getItem("schoolId"),
+  });
 };
 
 export const UpdateTeacher = async (model) => {
   return await axios.post(`/api/Teacher/UpdateTeacher`, model);
+};
+
+export const getTeachersBySchoolAsync = async () => {
+  return await axios.get(`/api/Teacher/getTeachersBySchool`, {
+    params: { id: localStorage.getItem("schoolId") },
+  });
 };

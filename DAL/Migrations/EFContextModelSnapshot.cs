@@ -140,10 +140,15 @@ namespace DAL.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
+                    b.Property<long>("SchoolId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("TeacherId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
 
                     b.HasIndex("TeacherId")
                         .IsUnique();
@@ -164,6 +169,28 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tblRefreshTokens");
+                });
+
+            modelBuilder.Entity("DAL.Entities.School", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Schools");
                 });
 
             modelBuilder.Entity("DAL.Entities.Student", b =>
@@ -193,9 +220,14 @@ namespace DAL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<long>("SchoolId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("tblStudent");
                 });
@@ -227,7 +259,12 @@ namespace DAL.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<long>("SchoolId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("tblTeacher");
                 });
@@ -343,9 +380,17 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.Group", b =>
                 {
+                    b.HasOne("DAL.Entities.School", "School")
+                        .WithMany("Groups")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DAL.Entities.Teacher", "Teacher")
                         .WithOne("Group")
                         .HasForeignKey("DAL.Entities.Group", "TeacherId");
+
+                    b.Navigation("School");
 
                     b.Navigation("Teacher");
                 });
@@ -373,7 +418,15 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DAL.Entities.School", "School")
+                        .WithMany("Students")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Group");
+
+                    b.Navigation("School");
 
                     b.Navigation("User");
                 });
@@ -385,6 +438,14 @@ namespace DAL.Migrations
                         .HasForeignKey("DAL.Entities.Teacher", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("DAL.Entities.School", "School")
+                        .WithMany("Teachers")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("School");
 
                     b.Navigation("User");
                 });
@@ -442,6 +503,15 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Entities.Group", b =>
                 {
                     b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("DAL.Entities.School", b =>
+                {
+                    b.Navigation("Groups");
+
+                    b.Navigation("Students");
+
+                    b.Navigation("Teachers");
                 });
 
             modelBuilder.Entity("DAL.Entities.Teacher", b =>

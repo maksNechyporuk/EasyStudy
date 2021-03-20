@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using BLL.Interfaces;
 using BLL.Models.AccountModels;
@@ -7,12 +8,15 @@ using BLL.Models.ErrorsModel;
 using BLL.Models.TeacherModels;
 using DAL.Entities;
 using EasyStudy.Core.Controller;
+using EasyStudy.Helpers;
 using JWT.Token.Service;
 using JWT.Token.Service.Models;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace EasyStudy.Controllers
@@ -26,8 +30,11 @@ namespace EasyStudy.Controllers
         private readonly ILogger<TeacherController> _logger;
         private readonly ITeacherService _teacherService;
         private readonly IJWTTokenService _jwtTokenService;
-
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
         public TeacherController(
+               IWebHostEnvironment env,
+            IConfiguration configuration,
             UserManager<DbUser> userManager,
             SignInManager<DbUser> signInManager,
             ILogger<TeacherController> logger,
@@ -40,6 +47,8 @@ namespace EasyStudy.Controllers
             this._logger = logger;
             this._teacherService = teacherService;
             this._jwtTokenService = jwtTokenService;
+            this._configuration = configuration;
+            this._env = env;
         }
 
         [HttpGet]
@@ -91,17 +100,44 @@ namespace EasyStudy.Controllers
 
             return await HandleRequestAsync(async () =>
             {
+                string imageName = Path.GetRandomFileName() + ".jpg";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Uploaded\Users");
+
+                string pathSaveImages = InitStaticFiles
+                         .CreateImageByFileName(_env, _configuration,
+                              new string[] { Directory.GetCurrentDirectory(), @"wwwroot", "Uploaded", "Users" },
+                              imageName,
+                              model.Photo);
+
                 //+38 (098) 665 34 18
+                model.Photo = imageName;
+
                 var rezult = await _teacherService.Create(model);
                 if (rezult)
                 {
                     var user = _userManager.FindByEmailAsync(model.Email).Result;
-                    // Return token
-                    JwtInfo jwtInfo = new JwtInfo()
+                    var teacher = await _teacherService.GetTeacherById(user.Id);
+                    JwtInfo jwtInfo;
+                    if (teacher != null)
                     {
-                        Token = _jwtTokenService.CreateToken(user),
-                        RefreshToken = _jwtTokenService.CreateRefreshToken(user)
-                    };
+                        // Return token
+                        jwtInfo = new JwtInfo()
+                        {
+                            Token = _jwtTokenService.CreateToken(user),
+                            RefreshToken = _jwtTokenService.CreateRefreshToken(user),
+                            SchoolId = teacher.SchoolId.ToString()
+                        };
+                    }
+                    else
+                    {
+                        // Return token
+                        jwtInfo = new JwtInfo()
+                        {
+                            Token = _jwtTokenService.CreateToken(user),
+                            RefreshToken = _jwtTokenService.CreateRefreshToken(user),
+                        };
+                    }
+
                     this._logger.LogDebug("End method LoginUser...");
 
                     return Ok(jwtInfo);
@@ -112,7 +148,7 @@ namespace EasyStudy.Controllers
                      {
                         { "email", "Користувач з даною електронною поштою уже зареєстрований" }
                      };
-                    return Ok(invalid);
+                    return BadRequest(invalid);
                 }
 
             });
@@ -156,13 +192,28 @@ namespace EasyStudy.Controllers
                 //    this._recaptchaService.IsValid(loginModel.RecaptchaToken);
                 //}
 
-
+                var teacher = await _teacherService.GetTeacherById(user.Id);
                 // Return token
-                JwtInfo jwtInfo = new JwtInfo()
+                JwtInfo jwtInfo;
+                if (teacher != null)
                 {
-                    Token = _jwtTokenService.CreateToken(user),
-                    RefreshToken = _jwtTokenService.CreateRefreshToken(user)
-                };
+                    // Return token
+                    jwtInfo = new JwtInfo()
+                    {
+                        Token = _jwtTokenService.CreateToken(user),
+                        RefreshToken = _jwtTokenService.CreateRefreshToken(user),
+                        SchoolId = teacher.SchoolId.ToString()
+                    };
+                }
+                else
+                {
+                    // Return token
+                    jwtInfo = new JwtInfo()
+                    {
+                        Token = _jwtTokenService.CreateToken(user),
+                        RefreshToken = _jwtTokenService.CreateRefreshToken(user),
+                    };
+                }
 
                 this.HttpContext.Session.SetInt32("LoginAttemts", 0);
                 this._logger.LogDebug("End method LoginUser...");
@@ -249,6 +300,13 @@ namespace EasyStudy.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [HttpGet]
+        [Route("getTeachersBySchool")]
+        public async Task<List<TeacherVM>> GetTeachersBySchool(long Id)
+        {
+            return await _teacherService.GetTeachersBySchool(Id);
         }
     }
 }

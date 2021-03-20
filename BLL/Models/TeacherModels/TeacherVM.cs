@@ -17,5 +17,7 @@ namespace BLL.Models.TeacherModels
         public string NameGroup { get; set; }
         public long? GroupId { get; set; }
         public List<StudentVM> Students { get; set; }
+        public int SchoolId { get; set; }
+
     }
 }

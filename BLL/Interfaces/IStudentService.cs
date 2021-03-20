@@ -21,5 +21,7 @@ namespace BLL.Interfaces
         Task<bool> CreateStudent(TeacherCreateVM model);
         Task<bool> DeleteStudents(int[] ids);
         Task<bool> UpdateStudent(TeacherCreateVM model);
+        Task<List<StudentVM>> GetStudentsBySchool(long groupId);
+
     }
 }

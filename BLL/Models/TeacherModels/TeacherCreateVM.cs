@@ -12,6 +12,7 @@ namespace BLL.Models.TeacherModels
         public string Image { get; set; }
         public DateTime DayOfbirthday { get; set; }
         public long? GroupId { get; set; }
+        public int SchoolId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleName { get; set; }

@@ -13,5 +13,6 @@ namespace BLL.Interfaces
         Task<bool> DeleteGroup(int id);
         Task<bool> EditGroup(UpdateAndCreateGroupVM model);
 
+        Task<List<GroupVM>> GetGroupsBySchool(long schoolId);
     }
 }

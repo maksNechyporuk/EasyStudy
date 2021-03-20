@@ -10,5 +10,6 @@ namespace JWT.Token.Service.Models
     {
         public string Token { get; set; }
         public string RefreshToken { get; set; }
+        public string SchoolId { get; set; }
     }
 }

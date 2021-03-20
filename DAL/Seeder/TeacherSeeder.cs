@@ -30,8 +30,9 @@ namespace DAL.Seeder
                     Image = "https://randomuser.me/api/portraits/women/96.jpg",
                     FirstName = "Jacira",
                     LastName = "Gonçalves",
-                    MiddleName = "Іванович",
-                    GroupId = 1
+                    MiddleName = "Gonçalves",
+                    GroupId = 1,
+                    SchoolId = 1
 
                 };
                 var user = new DbUser()
@@ -53,8 +54,9 @@ namespace DAL.Seeder
                     Image = "https://randomuser.me/api/portraits/men/83.jpg",
                     FirstName = "Levi",
                     LastName = "Evans",
-                    MiddleName = "Іванович",
-                    GroupId = 2
+                    MiddleName = "Evans",
+                    GroupId = 2,
+                    SchoolId = 1
                 };
                 var user = new DbUser()
                 {
@@ -66,6 +68,37 @@ namespace DAL.Seeder
                 var result = userManager.CreateAsync(user, "8Ki9x9-3of+s").Result;
                 result = userManager.AddToRoleAsync(user, roleName).Result;
             }
+            roleName = "Admin";
+            if (roleManager.FindByNameAsync(roleName).Result == null)
+            {
+                var result = roleManager.CreateAsync(new DbRole
+                {
+                    Name = roleName
+                }).Result;
+            }
+            email = "admin1@gmail.com";
+            if (userManager.FindByEmailAsync(email).Result == null)
+            {
+                Teacher teacher = new Teacher()
+                {
+                    DayOfbirthday = DateTime.Now,
+                    Image = "https://randomuser.me/api/portraits/men/83.jpg",
+                    FirstName = "Levi",
+                    LastName = "Evans",
+                    MiddleName = "Evans",
+                    SchoolId = 1
+                };
+                var user = new DbUser()
+                {
+                    Email = email,
+                    UserName = email,
+                    PhoneNumber = "(519)-347-8485",
+                    Teacher = teacher
+                };
+                var result = userManager.CreateAsync(user, "Qwerty1234").Result;
+                result = userManager.AddToRoleAsync(user, roleName).Result;
+            }
+
             //for (int i = 0; i < 100; i++)
             //{
             //    var fakerTeacker = new Faker<Teacher>()
@@ -81,6 +114,8 @@ namespace DAL.Seeder
             //    var user = fakerUser.Generate(1);
             //    user[0].Teacher = fakerTeacker.Generate(1)[0];
             //    user[0].UserName = user[0].Email;
+            //    user[0].Teacher.SchoolId = 1;
+
             //    if (userManager.FindByEmailAsync(user[0].Email).Result == null)
             //    {
             //        var result = userManager.CreateAsync(user[0], "8Ki9x9-3of+s").Result;

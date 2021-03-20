@@ -33,7 +33,8 @@ namespace DAL.Seeder
                     FirstName = "Deniz",
                     LastName = "Adan",
                     MiddleName = "Іванович",
-                    GroupId = 2
+                    GroupId = 2,
+                    SchoolId = 1
                 };
                 var user = new DbUser()
                 {
@@ -58,7 +59,8 @@ namespace DAL.Seeder
                     LastName = "Messemaker",
                     MiddleName = "Іванович"
                     ,
-                    GroupId = 2
+                    GroupId = 2,
+                    SchoolId = 1
                 };
                 var user = new DbUser()
                 {
@@ -83,7 +85,8 @@ namespace DAL.Seeder
                     LastName = "Johansen",
                     MiddleName = "Іванович"
                     ,
-                    GroupId = 1
+                    GroupId = 1,
+                    SchoolId = 1
                 };
                 var user = new DbUser()
                 {
@@ -108,7 +111,8 @@ namespace DAL.Seeder
                     LastName = "Wright",
                     MiddleName = "Іванович"
                     ,
-                    GroupId = 1
+                    GroupId = 1,
+                    SchoolId = 1
 
                 };
                 var user = new DbUser()
@@ -133,7 +137,8 @@ namespace DAL.Seeder
                     FirstName = "Beatrice",
                     LastName = "Lavigne",
                     MiddleName = "Іванович",
-                    GroupId = 1
+                    GroupId = 1,
+                    SchoolId = 1
                 };
                 var user = new DbUser()
                 {
@@ -160,6 +165,7 @@ namespace DAL.Seeder
             //    var user = fakerUser.Generate(1);
             //    user[0].Student = fakerStudent.Generate(1)[0];
             //    user[0].UserName = user[0].Email;
+            //    user[0].Student.SchoolId = 1;
             //    if (userManager.FindByEmailAsync(user[0].Email).Result == null)
             //    {
             //        var result = userManager.CreateAsync(user[0], "8Ki9x9-3of+s").Result;

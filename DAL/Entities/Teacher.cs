@@ -30,5 +30,9 @@ namespace DAL.Entities
         public virtual Group Group { get; set; }
         public virtual DbUser User { get; set; }
 
+        [ForeignKey("SchoolIdOf")]
+        public long SchoolId { get; set; }
+        public virtual School School { get; set; }
+
     }
 }

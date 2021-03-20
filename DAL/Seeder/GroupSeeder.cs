@@ -6,7 +6,7 @@ namespace DAL.Seeder
 {
     public class GroupSeeder
     {
-        public static void SeedCategories(EFContext context)
+        public static void SeedGroups(EFContext context)
         {
 
             string name = "1";
@@ -16,6 +16,8 @@ namespace DAL.Seeder
                 {
                     Name = name,
                     TeacherId = 1,
+                    SchoolId = 1
+
                 };
                 context.Groups.Add(group);
                 context.SaveChanges();
@@ -27,6 +29,7 @@ namespace DAL.Seeder
                 {
                     Name = name,
                     TeacherId = 2,
+                    SchoolId = 1
                 };
                 context.Groups.Add(group);
                 context.SaveChanges();

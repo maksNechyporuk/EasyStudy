@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
+using System.Diagnostics;
 
 namespace BLL.Services
 {
@@ -34,33 +36,34 @@ namespace BLL.Services
         }
         public async Task<List<TeacherVM>> GetJoinTeachers(IQueryable<Teacher> teachers)
         {
+            //\Uploaded\Users\600_ofp5tum0.igd.jpg
             var list = await teachers.Select(x =>
-                new TeacherVM()
-                {
-                    Id = x.Id,
-                    Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
-                    NameGroup = x.Group.Name != null ? x.Group.Name : " - ",
-                    Email = x.User.Email,
-                    DayOfbirthday = x.DayOfbirthday,
-                    Image = x.Image,
-                    PhoneNumber = x.User.PhoneNumber,
-                    GroupId = x.GroupId.Value,
-                    Students = x.Group.Students.Select(st => new StudentVM()
-                    {
-                        Id = st.Id,
-                        DayOfbirthday = st.DayOfbirthday,
-                        Email = st.User.Email,
-                        Image = st.Image,
-                        Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
-                        GroupId = st.GroupId.Value,
-                        NameGroup = st.Group.Name,
-                        NameTeacher = $"{st.Group.Teacher.FirstName} {st.Group.Teacher.LastName} {st.Group.Teacher.MiddleName}",
-                        PhoneNumber = st.User.PhoneNumber,
-                        TeacherId = st.Group.TeacherId.Value
-                    }
-                    ).ToList()
-                }
-            ).ToListAsync();
+             new TeacherVM()
+             {
+                 Id = x.Id,
+                 Name = $"{x.FirstName} {x.LastName}  {x.MiddleName}",
+                 NameGroup = x.Group.Name != null ? x.Group.Name : " - ",
+                 Email = x.User.Email,
+                 DayOfbirthday = x.DayOfbirthday,
+                 Image = x.Image.Contains("cloudflare") || x.Image.Contains("randomuser") ? x.Image : @"Uploaded\Users\600_" + x.Image,
+                 PhoneNumber = x.User.PhoneNumber,
+                 GroupId = x.GroupId.Value,
+                 Students = x.Group.Students.Select(st => new StudentVM()
+                 {
+                     Id = st.Id,
+                     DayOfbirthday = st.DayOfbirthday,
+                     Email = st.User.Email,
+                     Image = st.Image,
+                     Name = $"{st.FirstName} {st.LastName}  {st.MiddleName}",
+                     GroupId = st.GroupId.Value,
+                     NameGroup = st.Group.Name,
+                     NameTeacher = $"{st.Group.Teacher.FirstName} {st.Group.Teacher.LastName} {st.Group.Teacher.MiddleName}",
+                     PhoneNumber = st.User.PhoneNumber,
+                     TeacherId = st.Group.TeacherId.Value
+                 }
+                 ).ToList()
+             }
+         ).ToListAsync();
             return list;
         }
 
@@ -153,6 +156,7 @@ namespace BLL.Services
                 Image = teacher.Image,
                 PhoneNumber = teacher.User.PhoneNumber,
                 GroupId = teacher.GroupId.Value,
+                SchoolId = (int)teacher.SchoolId,
                 Students = teacher.Group.Students.Select(st => new StudentVM()
                 {
                     DayOfbirthday = st.DayOfbirthday,
@@ -174,25 +178,47 @@ namespace BLL.Services
 
         public async Task<bool> Create(TeacherRegisterVM model)
         {
+
             if (_userManager.FindByEmailAsync(model.Email).Result == null)
             {
-                var teacher = new Teacher()
+                try
                 {
-                    DayOfbirthday = model.DayOfbirthday,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    MiddleName = model.MiddleName
-                };
-                var user = new DbUser()
+                    var school = _context.Schools.SingleOrDefault((item) => item.Name == model.School);
+                    if (school == null)
+                    {
+                        var newSchool = new School
+                        {
+                            Name = model.School,
+                            Region = model.Region
+                        };
+                        _context.Schools.Add(newSchool);
+                        _context.SaveChanges();
+                        var teacher = new Teacher()
+                        {
+                            DayOfbirthday = model.DayOfbirthday,
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            MiddleName = model.MiddleName,
+                            SchoolId = newSchool.Id,
+                            Image = model.Photo
+                        };
+                        var user = new DbUser()
+                        {
+                            Email = model.Email,
+                            UserName = model.Email,
+                            PhoneNumber = model.PhoneNumber,
+                            Teacher = teacher
+                        };
+                        var result = _userManager.CreateAsync(user, model.Password).Result;
+                        result = _userManager.AddToRoleAsync(user, "Admin").Result;
+                        return result.Succeeded;
+                    }
+                }
+                catch (Exception ex)
                 {
-                    Email = model.Email,
-                    UserName = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-                    Teacher = teacher
-                };
-                var result = _userManager.CreateAsync(user, model.Password).Result;
-                result = _userManager.AddToRoleAsync(user, "Admin").Result;
-                return result.Succeeded;
+                    Debug.WriteLine(ex.Message);
+                }
+
             }
             return false;
 
@@ -259,7 +285,8 @@ namespace BLL.Services
                     DayOfbirthday = model.DayOfbirthday,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    MiddleName = model.MiddleName
+                    MiddleName = model.MiddleName,
+                    SchoolId = model.SchoolId
                 };
                 var user = new DbUser()
                 {
@@ -308,5 +335,10 @@ namespace BLL.Services
             return false;
         }
 
+        public async Task<List<TeacherVM>> GetTeachersBySchool(long schoolId)
+        {
+            var teachers = _context.Teachers.Where((item) => item.SchoolId == schoolId).AsQueryable();
+            return await GetJoinTeachers(teachers);
+        }
     }
 }

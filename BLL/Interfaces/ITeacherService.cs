@@ -22,6 +22,7 @@ namespace BLL.Interfaces
         Task<bool> Create(TeacherRegisterVM student);
         Task<List<TeacherVM>> GetTeachersWithoutGroup();
         Task<bool> DeleteTeacher(int[] ids);
+        Task<List<TeacherVM>> GetTeachersBySchool(long groupId);
 
     }
 }

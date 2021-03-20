@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import TextField from "../../components/inputs/TextFieldGroup/TextFieldGroup";
 import PhoneField from "../../components/inputs/PhoneFieldGroup/PhoneFieldGroup";
+import { useTranslation } from "react-i18next";
+
 import { register, login } from "../../services/authService";
 import { validateRegisterFields } from "../../common/validateRegister";
 import { validateLoginFields } from "../../common/validateLogin";
@@ -8,16 +10,21 @@ import { useHistory } from "react-router";
 import { loginByJWT } from "../../services/jwtService";
 import styles from "./RegisterPage.module.css";
 import { getHomeRoute } from "../../routes/routes";
-
+import { ImageFieldGroupCropper } from "../../components/inputs/ImageFieldGroupCropper/ImageFieldGroupCropper";
+import "cropperjs/dist/cropper.css";
 const RegisterPage = () => {
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [password, setPassword] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [email, setEmail] = useState("");
+  const [region, setRegion] = useState("");
+  const [school, setSchool] = useState("");
   const [isRegister, setIsRegister] = useState(true);
   const [errors, setErrors] = useState({});
+  const [photo, setPhoto] = useState("");
   const history = useHistory();
+  const { t } = useTranslation();
 
   useEffect(() => {
     setLastName("");
@@ -25,6 +32,8 @@ const RegisterPage = () => {
     setPassword("");
     setMiddleName("");
     setEmail("");
+    setRegion("");
+    setSchool("");
     setErrors("");
   }, [isRegister]);
 
@@ -36,6 +45,9 @@ const RegisterPage = () => {
         firstName,
         middleName,
         password,
+        school,
+        region,
+        photo,
       });
       const isValid = Object.keys(errors).length === 0;
       if (isValid) {
@@ -45,7 +57,11 @@ const RegisterPage = () => {
           LastName: lastName,
           Email: email,
           Password: password,
+          Region: region,
+          School: school,
+          Photo: photo,
         };
+        console.log("model", model);
         await register(model)
           .then(
             (response) => {
@@ -85,14 +101,12 @@ const RegisterPage = () => {
         await login(model)
           .then(
             (response) => {
-              console.log(response);
               setErrors("");
               loginByJWT(response.data);
               history.push(getHomeRoute());
             },
             (err) => {
               setErrors(err.response.data);
-              console.log("Error:", err.response.data);
             }
           )
           .catch((err) => {
@@ -103,6 +117,20 @@ const RegisterPage = () => {
       }
     } else {
       setIsRegister(false);
+    }
+  };
+
+  const getCroppedImage = (img) => {
+    console.log("photo=>", !!errors["photo"]);
+
+    if (!!errors["photo"]) {
+      let error = Object.assign({}, errors);
+      delete error["photo"];
+      console.log("photo=>", img);
+      setPhoto(img);
+      setErrors(error);
+    } else {
+      setPhoto(img);
     }
   };
 
@@ -129,6 +157,12 @@ const RegisterPage = () => {
               error={errors.password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <label>Фото</label>
+            <ImageFieldGroupCropper
+              getCroppedImage={getCroppedImage}
+              error={errors.photo}
+              photo={photo}
+            />
             <TextField
               field="lastName"
               label="Прізвище"
@@ -138,7 +172,7 @@ const RegisterPage = () => {
             ></TextField>
             <TextField
               field="firstName"
-              label="Ім'я"
+              label={t("Common.Name")}
               value={firstName}
               error={errors.firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -149,6 +183,20 @@ const RegisterPage = () => {
               value={middleName}
               error={errors.middleName}
               onChange={(e) => setMiddleName(e.target.value)}
+            />{" "}
+            <TextField
+              field="middleName"
+              label="Область"
+              value={region}
+              error={errors.region}
+              onChange={(e) => setRegion(e.target.value)}
+            />{" "}
+            <TextField
+              field="middleName"
+              label="Школа"
+              value={school}
+              error={errors.school}
+              onChange={(e) => setSchool(e.target.value)}
             />
             <button onClick={registerHandler} className="btn btn-primary">
               <a className="text-white" to="/register">

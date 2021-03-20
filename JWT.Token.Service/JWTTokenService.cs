@@ -67,7 +67,9 @@ namespace JWT.Token.Service
             {
                 //new Claim(JwtRegisteredClaimNames.Sub, user.Id)
                 new Claim("id", user.Id.ToString()),
-                new Claim("name", user.UserName)
+                new Claim("name", user.UserName),
+               // new Claim("schoolId", user.Teacher.SchoolId.ToString())
+
             };
 
             foreach (var role in roles)

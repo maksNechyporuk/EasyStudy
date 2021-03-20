@@ -174,5 +174,12 @@ namespace EasyStudyStudent.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet]
+        [Route("getStudentsBySchool")]
+        public async Task<List<StudentVM>> GetStudentsBySchool(long Id)
+        {
+            return await _studentService.GetStudentsBySchool(Id);
+        }
     }
 }

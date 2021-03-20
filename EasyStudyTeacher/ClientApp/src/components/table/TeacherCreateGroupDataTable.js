@@ -116,7 +116,7 @@ const TeacherCreateGroupDataTable = ({ setSelected, selection, idEdit }) => {
               selectionMode="single"
               headerStyle={{ width: "3rem" }}
             ></Column>
-            <Column field="name" header="Ім'я" sortable></Column>
+            <Column field="name" header={t("Common.Name")} sortable></Column>
             <Column field="email" header="Email" sortable></Column>
             {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
           </DataTable>

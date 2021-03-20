@@ -96,5 +96,12 @@ namespace EasyStudy.Controllers
             }
             return Ok();
         }
+
+        [HttpGet]
+        [Route("getGroupsBySchool")]
+        public async Task<List<GroupVM>> GetGroupsBySchool(long Id)
+        {
+            return await _groupService.GetGroupsBySchool(Id);
+        }
     }
 }

@@ -3,6 +3,7 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
 }
 
 #root {
@@ -11,5 +12,27 @@ body {
   background-attachment: fixed;
   background-size: cover;
   width: 100vw;
-  height: 100vh;
+  height: auto;
+  min-height: 100vh;
+}
+
+.custom-file-label {
+  word-wrap: break-word;
+}
+
+.language {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 3vh;
+  margin-top: 3vh;
+  cursor: pointer;
+}
+.active {
+  color: white;
+}
+
+.pro-menu {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  flex-grow: 1;
 }

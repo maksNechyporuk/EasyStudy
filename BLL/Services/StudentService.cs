@@ -274,7 +274,8 @@ namespace BLL.Services
                     DayOfbirthday = model.DayOfbirthday,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    MiddleName = model.MiddleName
+                    MiddleName = model.MiddleName,
+                    SchoolId = model.SchoolId
                 };
                 var user = new DbUser()
                 {
@@ -321,6 +322,13 @@ namespace BLL.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<List<StudentVM>> GetStudentsBySchool(long schoolId)
+        {
+            var students = _context.Students.Where((item) => item.SchoolId == schoolId).AsQueryable();
+
+            return await GetJoinStudents(students);
         }
     }
 }

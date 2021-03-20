@@ -15,6 +15,7 @@ namespace DAL.Entities
 
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
+        public virtual DbSet<School> Schools { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
         public virtual DbSet<Student> Students { get; set; }
         public EFContext(DbContextOptions<EFContext> options)
@@ -50,6 +51,21 @@ namespace DAL.Entities
                 .WithMany(g => g.Students)
                 .HasForeignKey(s => s.GroupId);
 
+            builder.Entity<Student>()
+                .HasOne<School>(s => s.School)
+                .WithMany(g => g.Students)
+                .HasForeignKey(s => s.SchoolId);
+
+            builder.Entity<Teacher>()
+                .HasOne<School>(s => s.School)
+                .WithMany(g => g.Teachers)
+                .HasForeignKey(s => s.SchoolId);
+
+
+            builder.Entity<Group>()
+                .HasOne<School>(s => s.School)
+                .WithMany(g => g.Groups)
+                .HasForeignKey(s => s.SchoolId);
         }
     }
 }
