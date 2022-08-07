@@ -191,7 +191,7 @@ const StudentPage = () => {
         .then(
           async (response) => {
             console.log(response);
-            setCreateDialog(false);
+            setGroupEditDialog(false);
             getStudent();
             toast.current.show({
               severity: "success",
@@ -200,6 +200,8 @@ const StudentPage = () => {
               life: 3000,
             });
             setStudent(emptyStudent);
+            setGroupEditDialog(false);
+
             setSelectedStudent(null);
             setSelectedStudents(null);
           },

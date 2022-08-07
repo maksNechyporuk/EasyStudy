@@ -165,10 +165,11 @@ namespace BLL.Services
             return await GetJoinStudents(students);
         }
 
-        public async Task<StudentVM> GetStudentById(long StudentId)
+        public StudentVM GetStudentById(long StudentId)
         {
             var student = _context.Students.Where(st => st.Id == StudentId).Select(student => new StudentVM
             {
+                Id = student.Id,
                 FirstName = student.FirstName,
                 LastName = student.LastName,
                 MiddleName = student.MiddleName,
@@ -181,11 +182,11 @@ namespace BLL.Services
                 GroupId = student.GroupId.Value,
                 NameTeacher =
                     $"{student.Group.Teacher.FirstName} {student.Group.Teacher.LastName}  {student.Group.Teacher.MiddleName}",
-                TeacherId = student.Group.TeacherId.Value
-            }).SingleOrDefaultAsync();
+                TeacherId = student.Group.TeacherId.Value,
+                SchoolId = (int?)student.SchoolId
+            }).SingleOrDefault();
 
-
-            return await student;
+            return student;
         }
 
 

@@ -68,7 +68,7 @@ namespace EasyStudyStudent.Controllers
         [Route("searchById")]
         public async Task<StudentVM> GetStudentById(long Id)
         {
-            return await _studentService.GetStudentById(Id);
+            return _studentService.GetStudentById(Id);
         }
 
         [HttpGet]
@@ -178,6 +178,13 @@ namespace EasyStudyStudent.Controllers
         [HttpGet]
         [Route("getStudentsBySchool")]
         public async Task<List<StudentVM>> GetStudentsBySchool(long Id)
+        {
+            return await _studentService.GetStudentsBySchool(Id);
+        }
+
+        [HttpGet]
+        [Route("TestQgis")]
+        public async Task<List<StudentVM>> TestQgis(long Id)
         {
             return await _studentService.GetStudentsBySchool(Id);
         }

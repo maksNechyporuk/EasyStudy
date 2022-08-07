@@ -159,7 +159,7 @@ namespace EasyStudy
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-            SeederDB.SeedData(app.ApplicationServices, this.Configuration);
+            //SeederDB.SeedData(app.ApplicationServices, this.Configuration);
 
         }
 

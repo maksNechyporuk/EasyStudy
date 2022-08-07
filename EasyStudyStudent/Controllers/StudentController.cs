@@ -65,7 +65,7 @@ namespace EasyStudyStudent.Controllers
         [Route("students/searchById/{Id}")]
         public async Task<StudentVM> GetStudentById([FromRoute] long Id)
         {
-            return await _studentService.GetStudentById(Id);
+            return _studentService.GetStudentById(Id);
         }
         [HttpGet]
         [Route("students/searchByGroup/{Id}")]
@@ -78,7 +78,7 @@ namespace EasyStudyStudent.Controllers
         [Route("students/Register")]
         public async Task<IActionResult> RegisterStudent([FromBody] StudentRegisterVM model)
         {
-            var  rezult = await _studentService.Create(model);
+            var rezult = await _studentService.Create(model);
             if (rezult)
             {
                 return Ok();

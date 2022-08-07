@@ -122,9 +122,9 @@ namespace BLL.Services
             //             TeacherId = st.Group.TeacherId.Value
             //         }
             //     ).ToList().Count>0 )
-            var student = await _studentService.GetStudentById(StudentId);
+            var student = _studentService.GetStudentById(StudentId);
 
-            var teacher = await GetTeacherById(student.TeacherId);
+            var teacher = await GetTeacherById((long)student.TeacherId);
 
             // var teacher = _context.Teachers.GroupJoin(_context.Students,
             //     t => t.Id,
